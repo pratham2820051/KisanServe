@@ -1,0 +1,86 @@
+[
+  {
+    "keywords": ["wheat", "gehu", "गेहूं"],
+    "answer": "Wheat grows best in cool, dry climates (15–20°C). Sow between October–December. Use certified seeds at 100kg/ha. Apply 120kg N, 60kg P, 40kg K per hectare. Irrigate at crown root initiation, tillering, jointing, flowering, and grain filling stages. Harvest when moisture is below 14%. Common diseases: rust, smut — use resistant varieties."
+  },
+  {
+    "keywords": ["rice", "paddy", "dhan", "धान", "chawal"],
+    "answer": "Rice requires 20–35°C temperature and 150–200cm rainfall. Transplant 25-day seedlings at 20×15cm spacing. Apply 120kg N/ha in 3 splits. Maintain 5cm standing water during vegetative stage. Drain 10 days before harvest. Watch for blast disease, brown planthopper, and stem borer."
+  },
+  {
+    "keywords": ["tomato", "tamatar", "टमाटर"],
+    "answer": "Tomato grows best at 20–27°C. Transplant 4-week seedlings. Space at 60×45cm. Apply 150kg N, 60kg P, 60kg K per hectare. Stake plants at 30cm height. Irrigate every 5–7 days. Common problems: early blight, late blight, fruit borer. Use drip irrigation to reduce disease."
+  },
+  {
+    "keywords": ["onion", "pyaz", "प्याज"],
+    "answer": "Onion requires well-drained loamy soil. Transplant at 15×10cm spacing. Apply 100kg N, 50kg P, 50kg K per hectare. Avoid waterlogging. Stop irrigation 2 weeks before harvest. Cure bulbs in shade for 7–10 days before storage. Common pest: thrips — use spinosad spray."
+  },
+  {
+    "keywords": ["cotton", "kapas", "कपास"],
+    "answer": "Cotton needs 21–30°C and 60–100cm rainfall. Sow in May–June. Space at 90×60cm. Apply 180kg N, 90kg P, 90kg K per hectare. Critical irrigation at flowering and boll formation. Major pests: bollworm, whitefly, aphids. Use Bt cotton varieties for bollworm resistance."
+  },
+  {
+    "keywords": ["sugarcane", "ganna", "गन्ना"],
+    "answer": "Sugarcane grows best in tropical climate. Plant setts at 75–90cm row spacing. Apply 250kg N, 60kg P, 60kg K per hectare. Irrigate every 7–10 days. Earthing up at 60 and 120 days. Harvest at 10–12 months. Common diseases: red rot, smut — use disease-free setts."
+  },
+  {
+    "keywords": ["maize", "corn", "makka", "मक्का"],
+    "answer": "Maize grows at 21–27°C. Sow at 60×25cm spacing. Apply 120kg N, 60kg P, 40kg K per hectare. Critical irrigation at knee-high, tasseling, and grain filling. Harvest when husk turns brown. Common pests: fall armyworm, stem borer — use coragen spray."
+  },
+  {
+    "keywords": ["potato", "aloo", "आलू"],
+    "answer": "Potato grows best at 15–20°C. Plant certified seed tubers at 60×20cm. Apply 180kg N, 80kg P, 100kg K per hectare. Hill up soil at 30 days. Irrigate every 7–10 days. Stop irrigation 2 weeks before harvest. Major disease: late blight — spray mancozeb preventively."
+  },
+  {
+    "keywords": ["pest", "insect", "keet", "कीट", "bug"],
+    "answer": "Integrated Pest Management (IPM): 1) Monitor fields weekly, 2) Use yellow/blue sticky traps, 3) Release natural enemies like Trichogramma, 4) Apply neem oil (5ml/L) as first line, 5) Use chemical pesticides only when pest crosses economic threshold. Rotate pesticide groups to prevent resistance."
+  },
+  {
+    "keywords": ["fertilizer", "khad", "खाद", "urea", "npk", "nitrogen"],
+    "answer": "Balanced fertilization: Always do soil test first. General NPK for cereals: 120:60:40 kg/ha. Split nitrogen — 1/3 basal, 1/3 at tillering, 1/3 at panicle initiation. Add 5 tonnes FYM/ha before sowing. Use micronutrients (zinc sulfate 25kg/ha) if deficiency observed. Avoid excess nitrogen — causes lodging and disease."
+  },
+  {
+    "keywords": ["irrigation", "water", "sinchai", "सिंचाई", "drip"],
+    "answer": "Efficient irrigation tips: Drip irrigation saves 40–60% water. Sprinkler saves 25–30%. Irrigate in early morning or evening. Use tensiometers to measure soil moisture. Critical stages: germination, flowering, grain filling. Avoid waterlogging — causes root rot. Mulching reduces evaporation by 30%."
+  },
+  {
+    "keywords": ["soil", "mitti", "मिट्टी", "ph", "organic"],
+    "answer": "Healthy soil management: Test soil every 3 years. Ideal pH: 6.0–7.5 for most crops. Add organic matter (FYM, compost, vermicompost) to improve structure. Avoid over-tilling. Use green manure crops (dhaincha, sunhemp) to fix nitrogen. Soil organic carbon above 0.5% is essential for good yield."
+  },
+  {
+    "keywords": ["disease", "blight", "rust", "fungus", "rog", "रोग"],
+    "answer": "Disease management: Use certified disease-free seeds. Follow crop rotation (3-year cycle). Apply fungicides preventively during humid weather. Common fungicides: mancozeb (contact), propiconazole (systemic). Remove and destroy infected plant parts. Maintain proper spacing for air circulation."
+  },
+  {
+    "keywords": ["weather", "rain", "mausam", "मौसम", "forecast", "climate"],
+    "answer": "Weather-smart farming: Check 7-day forecast before sowing and spraying. Avoid pesticide application 24 hours before rain. During drought, use mulching and deficit irrigation. Install rain gauge to track local rainfall. Consider crop insurance (PM Fasal Bima Yojana) for weather risks. Sow drought-tolerant varieties in low-rainfall areas."
+  },
+  {
+    "keywords": ["organic", "jeevamrit", "vermicompost", "compost", "bio"],
+    "answer": "Organic farming practices: Use vermicompost (2–3 tonnes/ha), FYM (10 tonnes/ha), and biofertilizers (Rhizobium, PSB, Azotobacter). Prepare jeevamrit: 10L cow urine + 10kg cow dung + 2kg jaggery + 2kg gram flour in 200L water, ferment 48 hours. Apply 200L/acre every 15 days. Reduces input cost by 40%."
+  },
+  {
+    "keywords": ["government", "scheme", "subsidy", "yojana", "loan", "pm kisan"],
+    "answer": "Key government schemes: 1) PM-KISAN — ₹6000/year direct benefit, 2) PM Fasal Bima Yojana — crop insurance at 1.5–2% premium, 3) Kisan Credit Card — crop loan at 4% interest, 4) Soil Health Card — free soil testing, 5) PM Krishi Sinchai Yojana — drip/sprinkler subsidy up to 55%. Contact your local agriculture office or call Kisan Call Centre: 1800-180-1551."
+  },
+  {
+    "keywords": ["market", "price", "mandi", "rate", "sell", "crop price"],
+    "answer": "Market information: Check daily mandi prices on eNAM portal (enam.gov.in) or Agmarknet. MSP (Minimum Support Price) is announced by government before each season. Sell through FPOs (Farmer Producer Organizations) for better prices. Avoid distress selling — use warehouse receipt financing. APMC mandis provide transparent auction system."
+  },
+  {
+    "keywords": ["tractor", "machine", "equipment", "farm machinery"],
+    "answer": "Farm mechanization: Tractor rental costs ₹800–1200/hour. Use custom hiring centers for affordable access. Key machines: rotavator (soil prep), seed drill (sowing), sprayer (pest control), combine harvester (harvesting). Proper maintenance: change oil every 100 hours, check tire pressure weekly, clean air filter daily during field work."
+  },
+  {
+    "keywords": ["storage", "warehouse", "grain storage", "silo"],
+    "answer": "Post-harvest storage: Dry grain to safe moisture (wheat 12%, rice 14%, maize 12%) before storage. Use hermetic bags (PICS bags) for small quantities. Fumigate with aluminum phosphide tablets in sealed storage. Cold storage for vegetables and fruits. Warehouse Receipt System allows loans against stored produce."
+  },
+  {
+    "keywords": ["crop rotation", "intercrop", "mixed farming"],
+    "answer": "Crop rotation benefits: Breaks pest and disease cycles, improves soil fertility, reduces input costs. Good rotations: Rice-Wheat, Cotton-Wheat, Maize-Potato. Intercropping: Maize+Soybean, Sorghum+Cowpea, Cotton+Groundnut. Legumes in rotation fix 50–100kg N/ha naturally, saving fertilizer cost."
+  },
+  {
+    "keywords": ["hello", "hi", "help", "namaste", "नमस्ते"],
+    "answer": "Hello! I am your AgriConnect farming assistant. I can help you with:\n• Crop cultivation (wheat, rice, vegetables)\n• Pest and disease management\n• Fertilizer and irrigation advice\n• Government schemes and subsidies\n• Market prices and storage\n\nJust ask me anything about farming!"
+  }
+]

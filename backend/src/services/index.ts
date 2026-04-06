@@ -1,0 +1,1 @@
+export { generateAndSendOtp } from './otpService';

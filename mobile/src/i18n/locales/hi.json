@@ -1,0 +1,69 @@
+{
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हो गया",
+    "retry": "पुनः प्रयास करें",
+    "cancel": "रद्द करें",
+    "confirm": "पुष्टि करें",
+    "save": "सहेजें",
+    "back": "वापस",
+    "search": "खोजें",
+    "noResults": "कोई परिणाम नहीं मिला"
+  },
+  "auth": {
+    "title": "AgriConnect",
+    "phoneLabel": "मोबाइल नंबर",
+    "phonePlaceholder": "अपना मोबाइल नंबर दर्ज करें",
+    "roleLabel": "मैं हूँ",
+    "roleFarmer": "किसान",
+    "roleProvider": "सेवा प्रदाता",
+    "sendOtp": "OTP भेजें",
+    "otpLabel": "OTP दर्ज करें",
+    "verifyOtp": "OTP सत्यापित करें",
+    "otpSent": "{{phone}} पर OTP भेजा गया",
+    "invalidOtp": "अमान्य या समाप्त OTP",
+    "accountLocked": "बहुत अधिक विफल प्रयासों के कारण खाता 15 मिनट के लिए बंद है"
+  },
+  "marketplace": {
+    "title": "सेवाएं",
+    "filterBy": "फ़िल्टर करें",
+    "sortBy": "क्रमबद्ध करें",
+    "price": "मूल्य",
+    "rating": "रेटिंग",
+    "distance": "दूरी",
+    "noServices": "आपके क्षेत्र में कोई सेवा नहीं मिली",
+    "unavailable": "अनुपलब्ध"
+  },
+  "booking": {
+    "title": "सेवा बुक करें",
+    "selectDate": "तारीख चुनें",
+    "selectTime": "समय चुनें",
+    "confirm": "बुकिंग की पुष्टि करें",
+    "pending": "लंबित",
+    "accepted": "स्वीकृत",
+    "inProgress": "प्रगति में",
+    "completed": "पूर्ण",
+    "cancelled": "रद्द",
+    "cancelBooking": "बुकिंग रद्द करें",
+    "duplicateError": "इस सेवा और समय स्लॉट के लिए आपकी पहले से एक सक्रिय बुकिंग है"
+  },
+  "chatbot": {
+    "title": "कृषि सहायक",
+    "placeholder": "कृषि संबंधी प्रश्न पूछें...",
+    "voiceInput": "अपना प्रश्न बोलें",
+    "noAnswer": "मुझे उत्तर नहीं मिला। कृपया स्थानीय विशेषज्ञ से परामर्श करें।",
+    "unavailable": "AI सहायक अस्थायी रूप से अनुपलब्ध है। बाद में पुनः प्रयास करें।"
+  },
+  "alerts": {
+    "weather": "मौसम अलर्ट",
+    "market": "बाजार मूल्य अपडेट",
+    "scheme": "सरकारी योजना",
+    "emergency": "आपातकालीन अलर्ट",
+    "translationUnavailable": "अनुवाद अस्थायी रूप से अनुपलब्ध है। अंग्रेजी में दिखाया जा रहा है।"
+  },
+  "profile": {
+    "title": "मेरी प्रोफ़ाइल",
+    "language": "भाषा",
+    "trustScore": "विश्वास स्कोर"
+  }
+}

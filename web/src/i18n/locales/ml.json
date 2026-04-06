@@ -1,0 +1,9 @@
+{
+  "common": { "loading": "ലോഡ് ചെയ്യുന്നു...", "error": "എന്തോ തെറ്റ് സംഭവിച്ചു", "retry": "വീണ്ടും ശ്രമിക്കുക", "cancel": "റദ്ദാക്കുക", "confirm": "സ്ഥിരീകരിക്കുക", "save": "സേവ് ചെയ്യുക", "back": "പിന്നോട്ട്", "search": "തിരയുക", "noResults": "ഫലങ്ങൾ കണ്ടെത്തിയില്ല" },
+  "auth": { "title": "AgriConnect", "phoneLabel": "മൊബൈൽ നമ്പർ", "phonePlaceholder": "നിങ്ങളുടെ മൊബൈൽ നമ്പർ നൽകുക", "roleLabel": "ഞാൻ", "roleFarmer": "കർഷകൻ", "roleProvider": "സേവന ദാതാവ്", "sendOtp": "OTP അയക്കുക", "otpLabel": "OTP നൽകുക", "verifyOtp": "OTP സ്ഥിരീകരിക്കുക", "otpSent": "{{phone}} ലേക്ക് OTP അയച്ചു", "invalidOtp": "അസാധുവായ അല്ലെങ്കിൽ കാലഹരണപ്പെട്ട OTP", "accountLocked": "അക്കൗണ്ട് 15 മിനിറ്റ് ലോക്ക് ചെയ്തു" },
+  "marketplace": { "title": "സേവനങ്ങൾ", "filterBy": "ഫിൽട്ടർ ചെയ്യുക", "sortBy": "അടുക്കുക", "price": "വില", "rating": "റേറ്റിംഗ്", "distance": "ദൂരം", "noServices": "നിങ്ങളുടെ പ്രദേശത്ത് സേവനങ്ങൾ കണ്ടെത്തിയില്ല", "unavailable": "ലഭ്യമല്ല" },
+  "booking": { "title": "സേവനം ബുക്ക് ചെയ്യുക", "selectDate": "തീയതി തിരഞ്ഞെടുക്കുക", "selectTime": "സമയം തിരഞ്ഞെടുക്കുക", "confirm": "ബുക്കിംഗ് സ്ഥിരീകരിക്കുക", "pending": "തീർപ്പാക്കാത്തത്", "accepted": "സ്വീകരിച്ചു", "inProgress": "പുരോഗതിയിൽ", "completed": "പൂർത്തിയായി", "cancelled": "റദ്ദാക്കി", "cancelBooking": "ബുക്കിംഗ് റദ്ദാക്കുക", "duplicateError": "ഈ സേവനത്തിനായി നിങ്ങൾക്ക് ഇതിനകം ഒരു സജീവ ബുക്കിംഗ് ഉണ്ട്" },
+  "chatbot": { "title": "കൃഷി സഹായി", "placeholder": "കൃഷി ചോദ്യം ചോദിക്കുക...", "voiceInput": "നിങ്ങളുടെ ചോദ്യം പറയുക", "noAnswer": "ഉത്തരം കണ്ടെത്തിയില്ല. ഒരു പ്രാദേശിക വിദഗ്ധനെ ബന്ധപ്പെടുക.", "unavailable": "AI സഹായി താൽക്കാലികമായി ലഭ്യമല്ല." },
+  "alerts": { "weather": "കാലാവസ്ഥ മുന്നറിയിപ്പ്", "market": "വിപണി വില അപ്ഡേറ്റ്", "scheme": "സർക്കാർ പദ്ധതി", "emergency": "അടിയന്തര മുന്നറിയിപ്പ്", "translationUnavailable": "വിവർത്തനം താൽക്കാലികമായി ലഭ്യമല്ല." },
+  "profile": { "title": "എന്റെ പ്രൊഫൈൽ", "language": "ഭാഷ", "trustScore": "വിശ്വാസ സ്കോർ" }
+}

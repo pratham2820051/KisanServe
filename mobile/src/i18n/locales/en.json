@@ -1,0 +1,69 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "back": "Back",
+    "search": "Search",
+    "noResults": "No results found"
+  },
+  "auth": {
+    "title": "AgriConnect",
+    "phoneLabel": "Mobile Number",
+    "phonePlaceholder": "Enter your mobile number",
+    "roleLabel": "I am a",
+    "roleFarmer": "Farmer",
+    "roleProvider": "Service Provider",
+    "sendOtp": "Send OTP",
+    "otpLabel": "Enter OTP",
+    "verifyOtp": "Verify OTP",
+    "otpSent": "OTP sent to {{phone}}",
+    "invalidOtp": "Invalid or expired OTP",
+    "accountLocked": "Account locked for 15 minutes due to too many failed attempts"
+  },
+  "marketplace": {
+    "title": "Services",
+    "filterBy": "Filter by",
+    "sortBy": "Sort by",
+    "price": "Price",
+    "rating": "Rating",
+    "distance": "Distance",
+    "noServices": "No services found in your area",
+    "unavailable": "Unavailable"
+  },
+  "booking": {
+    "title": "Book Service",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "confirm": "Confirm Booking",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "cancelBooking": "Cancel Booking",
+    "duplicateError": "You already have an active booking for this service and time slot"
+  },
+  "chatbot": {
+    "title": "Farming Assistant",
+    "placeholder": "Ask a farming question...",
+    "voiceInput": "Speak your question",
+    "noAnswer": "I could not find an answer. Please consult a local expert.",
+    "unavailable": "AI assistant is temporarily unavailable. Please try again later."
+  },
+  "alerts": {
+    "weather": "Weather Alert",
+    "market": "Market Price Update",
+    "scheme": "Government Scheme",
+    "emergency": "Emergency Alert",
+    "translationUnavailable": "Translation temporarily unavailable. Showing in English."
+  },
+  "profile": {
+    "title": "My Profile",
+    "language": "Language",
+    "trustScore": "Trust Score"
+  }
+}
