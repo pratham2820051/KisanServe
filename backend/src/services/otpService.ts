@@ -27,7 +27,7 @@ export async function generateAndSendOtp(user: HydratedDocument<IUser>): Promise
 
   await user.save();
 
-  const isDev = await sendSms(user.phone, `Your AgriConnect OTP is: ${otp}. Valid for 5 minutes.`);
+  const isDev = await sendSms(user.phone, `Your KisanServe OTP is: ${otp}. Valid for 5 minutes.`);
   return isDev ? otp : null;
 }
 

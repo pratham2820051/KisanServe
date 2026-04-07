@@ -96,7 +96,7 @@ export default function SplashAnimation({ onDone }: Props) {
 
       {/* Brand */}
       <div style={s.brand}>
-        <span style={s.brandName}>🌾 AgriConnect</span>
+        <span style={s.brandName}>🌾 KisanServe</span>
         <span style={s.brandSub}>Smart Farming Platform</span>
       </div>
 

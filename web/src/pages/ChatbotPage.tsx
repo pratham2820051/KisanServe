@@ -7,7 +7,7 @@ interface Message { role: 'user' | 'bot'; text: string; }
 export default function ChatbotPage() {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: t('chatbot.greeting', 'Hello! I am your AgriConnect AI assistant. Ask me anything about farming.') }
+    { role: 'bot', text: t('chatbot.greeting', 'Hello! I am your KisanServe AI assistant. Ask me anything about farming.') }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);

@@ -1,4 +1,4 @@
-# AgriConnect — Smart Farming Service Platform
+# KisanServe — Smart Farming Service Platform
 
 Monorepo structure:
 

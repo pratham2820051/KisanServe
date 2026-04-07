@@ -11,11 +11,13 @@ import cropDoctorRoutes from './cropDoctor';
 import recommendationRoutes from './recommendations';
 import smsRoutes from './sms';
 import calendarRoutes from './calendar';
+import statsRoutes from './stats';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/services', serviceRoutes);
+router.use('/stats', statsRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/feedback', feedbackRoutes);
 router.use('/provider', providerRoutes);

@@ -75,7 +75,7 @@ export default function LoginPage() {
         {/* Header */}
         <div style={s.header}>
           <span style={s.logo}>🌾</span>
-          <h1 style={s.title}>AgriConnect</h1>
+          <h1 style={s.title}>KisanServe</h1>
           <p style={s.subtitle}>Smart Farming Platform</p>
         </div>
 

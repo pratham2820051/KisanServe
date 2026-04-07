@@ -1,4 +1,4 @@
-# Implementation Plan: AgriConnect Smart Farming Service Platform
+# Implementation Plan: KisanServe Smart Farming Service Platform
 
 ## MVP Scope (Minimum Viable Product)
 

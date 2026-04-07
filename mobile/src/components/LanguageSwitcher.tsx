@@ -14,7 +14,7 @@ const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
   ml: 'മലയാളം',
 };
 
-const LANGUAGE_STORAGE_KEY = 'agriconnect_language';
+const LANGUAGE_STORAGE_KEY = 'KisanServe_language';
 
 const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();

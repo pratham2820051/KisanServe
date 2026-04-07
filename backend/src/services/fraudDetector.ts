@@ -4,7 +4,7 @@ import { Feedback } from '../models/Feedback';
 import { Booking } from '../models/Booking';
 
 /**
- * Fraud Detection Engine — AgriConnect Platform
+ * Fraud Detection Engine — KisanServe Platform
  *
  * Detects suspicious review and user behavior using 6 heuristics:
  *   1. IP burst — too many reviews from same IP in 10 minutes

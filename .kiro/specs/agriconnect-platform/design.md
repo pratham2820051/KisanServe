@@ -2,7 +2,7 @@
 
 ## Overview
 
-AgriConnect is a multi-role Smart Farming Service Platform built on a layered architecture. The system connects Farmers, Service Providers, and Admins through a React/React Native frontend, a Node.js/Express REST API backend, a MongoDB database, an AI layer (OpenAI GPT + RAG), and a Firebase notification service. The design prioritizes offline resilience, multi-language support, and low-literacy usability for rural users.
+KisanServe is a multi-role Smart Farming Service Platform built on a layered architecture. The system connects Farmers, Service Providers, and Admins through a React/React Native frontend, a Node.js/Express REST API backend, a MongoDB database, an AI layer (OpenAI GPT + RAG), and a Firebase notification service. The design prioritizes offline resilience, multi-language support, and low-literacy usability for rural users.
 
 ---
 

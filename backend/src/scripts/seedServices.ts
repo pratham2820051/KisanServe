@@ -121,7 +121,7 @@ export async function seedDemoServices(): Promise<void> {
       provider = new User({
         phone: '+919000000001',
         role: 'Service_Provider',
-        name: 'AgriConnect Demo Provider',
+        name: 'KisanServe Demo Provider',
         location: 'Bangalore, Karnataka',
         languagePreference: 'en',
         isActive: true,

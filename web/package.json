@@ -1,7 +1,7 @@
 {
-  "name": "agriconnect-web",
+  "name": "KisanServe-web",
   "version": "1.0.0",
-  "description": "AgriConnect Smart Farming Platform - React Web App",
+  "description": "KisanServe Smart Farming Platform - React Web App",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

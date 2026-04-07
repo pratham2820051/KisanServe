@@ -1,5 +1,5 @@
 /**
- * Security Audit — AgriConnect Platform
+ * Security Audit — KisanServe Platform
  *
  * Measures in place:
  * - JWT short-lived tokens (15min) + refresh tokens (7d)
@@ -53,7 +53,7 @@ async function bootstrap(): Promise<void> {
   await seedAllData();
 
   const server = app.listen(PORT, () => {
-    console.log(`AgriConnect API running on port ${PORT}`);
+    console.log(`KisanServe API running on port ${PORT}`);
   });
 
   setupGpsTracking(server);

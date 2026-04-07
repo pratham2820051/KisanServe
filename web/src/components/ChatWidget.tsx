@@ -14,7 +14,7 @@ const QUICK_QUESTIONS = [
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: '👋 Hello! I\'m your AgriConnect AI assistant.\n\nHow may I help you today? Ask me anything about farming!' }
+    { role: 'bot', text: '👋 Hello! I\'m your KisanServe AI assistant.\n\nHow may I help you today? Ask me anything about farming!' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,7 @@ export default function ChatWidget() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 22 }}>🤖</span>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>AgriConnect AI</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>KisanServe AI</div>
                 <div style={{ fontSize: 11, opacity: 0.8 }}>🟢 Online — Farming Assistant</div>
               </div>
             </div>

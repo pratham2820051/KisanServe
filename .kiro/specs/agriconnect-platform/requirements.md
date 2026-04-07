@@ -2,11 +2,11 @@
 
 ## Introduction
 
-AgriConnect is a Smart Farming Service Platform that connects farmers with service providers (tractor owners, labor contractors, fertilizer sellers, soil testing labs, equipment rental services) through a unified mobile and web application. The platform eliminates middlemen, reduces costs, and improves productivity by providing service discovery, booking, AI-based guidance, real-time alerts, and multi-language support. The system serves three roles: Farmers, Service Providers, and Admins. The system is implemented using React (frontend), Node.js (backend), MongoDB (database), and AI services including OpenAI GPT and RAG for intelligent features.
+KisanServe is a Smart Farming Service Platform that connects farmers with service providers (tractor owners, labor contractors, fertilizer sellers, soil testing labs, equipment rental services) through a unified mobile and web application. The platform eliminates middlemen, reduces costs, and improves productivity by providing service discovery, booking, AI-based guidance, real-time alerts, and multi-language support. The system serves three roles: Farmers, Service Providers, and Admins. The system is implemented using React (frontend), Node.js (backend), MongoDB (database), and AI services including OpenAI GPT and RAG for intelligent features.
 
 ## Glossary
 
-- **Platform**: The AgriConnect web and mobile application
+- **Platform**: The KisanServe web and mobile application
 - **Farmer**: A registered user who searches for and books farming services
 - **Service_Provider**: A registered user who lists and fulfills farming services
 - **Admin**: A platform manager with elevated privileges for moderation and oversight
@@ -370,4 +370,4 @@ AgriConnect is a Smart Farming Service Platform that connects farmers with servi
 3. Government API integration — connect directly with national and state agriculture portals to surface subsidies, scheme eligibility, and crop insurance information automatically.
 4. Crop disease detection via satellite imagery — extend the Crop Doctor to analyze field-level imagery from satellite sources for large-scale disease outbreak detection.
 5. Blockchain-based transaction transparency — record bookings and payments on a distributed ledger to provide tamper-proof transaction history for farmers and providers.
-6. Marketplace expansion — allow input suppliers (seeds, pesticides) to list products alongside services, turning AgriConnect into a full agricultural commerce platform.
+6. Marketplace expansion — allow input suppliers (seeds, pesticides) to list products alongside services, turning KisanServe into a full agricultural commerce platform.

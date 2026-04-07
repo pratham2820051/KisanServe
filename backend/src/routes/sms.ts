@@ -22,7 +22,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
     // Find user by phone number
     const user = await User.findOne({ phone: from });
     if (!user) {
-      return res.send(twimlResponse('Your number is not registered. Please sign up on AgriConnect first.'));
+      return res.send(twimlResponse('Your number is not registered. Please sign up on KisanServe first.'));
     }
 
     if (command === 'BOOK') {

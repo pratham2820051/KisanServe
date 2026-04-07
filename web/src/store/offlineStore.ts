@@ -1,5 +1,5 @@
 /**
- * Offline Store — AgriConnect Web
+ * Offline Store — KisanServe Web
  *
  * Caches services, bookings, and alerts in localStorage.
  * Queues booking requests made offline and syncs when connectivity is restored.

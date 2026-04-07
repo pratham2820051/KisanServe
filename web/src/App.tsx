@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import { useTranslation } from 'react-i18next';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -44,9 +45,8 @@ function FarmerTopBar() {
 
   return (
     <div style={topBar.bar}>
-      <span style={topBar.brand}>🌾 AgriConnect</span>
+      <Link to="/" style={{ ...topBar.brand, textDecoration: 'none' }}>🌾 KisanServe</Link>
       <div style={topBar.right}>
-        {/* Language dropdown */}
         <div style={{ position: 'relative' }}>
           <button style={topBar.langBtn} onClick={() => setLangOpen(o => !o)}>
             🌐 {currentLang.label} ▾
@@ -62,7 +62,6 @@ function FarmerTopBar() {
             </div>
           )}
         </div>
-        {/* Red logout */}
         <button style={topBar.logoutBtn}
           onClick={() => { localStorage.clear(); window.location.replace('/login'); }}>
           🚪 Logout
@@ -80,7 +79,7 @@ function SimpleTopBar({ title }: { title: string }) {
 
   return (
     <div style={{ ...topBar.bar, background: '#1b4332' }}>
-      <span style={topBar.brand}>{title}</span>
+      <Link to="/" style={{ ...topBar.brand, textDecoration: 'none' }}>{title}</Link>
       <div style={topBar.right}>
         <div style={{ position: 'relative' }}>
           <button style={topBar.langBtn} onClick={() => setLangOpen(o => !o)}>
@@ -124,10 +123,10 @@ function FarmerBottomNav() {
       {nav.map(n => {
         const active = location.pathname === n.href;
         return (
-          <a key={n.href} href={n.href} style={{ ...bottomNav.item, ...(active ? bottomNav.active : {}) }}>
+          <Link key={n.href} to={n.href} style={{ ...bottomNav.item, ...(active ? bottomNav.active : {}) }}>
             <span style={bottomNav.icon}>{n.icon}</span>
             <span style={bottomNav.label}>{n.label}</span>
-          </a>
+          </Link>
         );
       })}
     </div>
@@ -162,10 +161,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <OfflineIndicator />
-      {role === 'Service_Provider' && <SimpleTopBar title="🌾 AgriConnect" />}
-      {role === 'Admin' && <SimpleTopBar title="🌾 AgriConnect" />}
+      {role === 'Service_Provider' && <SimpleTopBar title="🌾 KisanServe" />}
+      {role === 'Admin' && <SimpleTopBar title="🌾 KisanServe" />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LandingPage />} />
 
         {/* Farmer routes — wrapped in FarmerLayout */}
         <Route path="/dashboard" element={<PrivateRoute roles={['Farmer']}><FarmerLayout><DashboardPage /></FarmerLayout></PrivateRoute>} />
@@ -181,7 +181,7 @@ export default function App() {
         <Route path="/provider" element={<PrivateRoute roles={['Service_Provider']}><div style={{ maxWidth: 1000, margin: '24px auto', padding: '0 16px' }}><ProviderDashboardPage /></div></PrivateRoute>} />
         <Route path="/admin" element={<PrivateRoute roles={['Admin']}><div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}><AdminPanelPage /></div></PrivateRoute>} />
 
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
