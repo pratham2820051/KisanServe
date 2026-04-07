@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import SplashAnimation from '../components/SplashAnimation';
 
 type Role = 'Farmer' | 'Service_Provider' | 'Admin';
 type Screen = 'login' | 'register' | 'verify' | 'forgot' | 'reset';
@@ -12,6 +12,7 @@ const ROLES: { value: Role; icon: string; label: string; color: string }[] = [
 ];
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [splashDone, setSplashDone] = useState(true); // Skip splash in production
   const [screen, setScreen] = useState<Screen>('login');
   const [role, setRole] = useState<Role>('Farmer');
@@ -40,9 +41,7 @@ export default function LoginPage() {
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       const r = res.data.user?.role;
-      if (r === 'Service_Provider') window.location.replace('/provider');
-      else if (r === 'Admin') window.location.replace('/admin');
-      else window.location.replace('/dashboard');
+      navigate(r === 'Service_Provider' ? '/provider' : r === 'Admin' ? '/admin' : '/dashboard', { replace: true });
     } catch (e: any) {
       setError(e.response?.data?.error || 'Login failed');
     } finally { setLoading(false); }
@@ -71,9 +70,7 @@ export default function LoginPage() {
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       const r = res.data.user?.role;
-      if (r === 'Service_Provider') window.location.replace('/provider');
-      else if (r === 'Admin') window.location.replace('/admin');
-      else window.location.replace('/dashboard');
+      navigate(r === 'Service_Provider' ? '/provider' : r === 'Admin' ? '/admin' : '/dashboard', { replace: true });
     } catch (e: any) {
       setError(e.response?.data?.error || 'Verification failed');
     } finally { setLoading(false); }
