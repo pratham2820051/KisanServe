@@ -43,10 +43,10 @@ export default function DashboardPage() {
   const user = (() => { try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; } })();
 
   useEffect(() => {
-    axios.get('/api/bookings', { headers })
+    api.get('/api/bookings', { headers })
       .then(r => setBookings(Array.isArray(r.data) ? r.data : []))
       .catch(() => {});
-    axios.get('/api/alerts', { headers })
+    api.get('/api/alerts', { headers })
       .then(r => setAlerts(r.data?.alerts ?? []))
       .catch(() => {});
   }, []);
@@ -54,7 +54,7 @@ export default function DashboardPage() {
   async function cancelBooking(id: string) {
     if (!window.confirm('Cancel this booking?')) return;
     try {
-      await axios.patch(`/api/bookings/${id}`, { status: 'Cancelled', cancellationReason: 'Cancelled by farmer' }, { headers });
+      await api.patch(`/api/bookings/${id}`, { status: 'Cancelled', cancellationReason: 'Cancelled by farmer' }, { headers });
       setBookings(b => b.map(x => x._id === id ? { ...x, status: 'Cancelled' } : x));
     } catch (e: any) { alert(e.response?.data?.error || 'Failed to cancel'); }
   }
@@ -62,7 +62,7 @@ export default function DashboardPage() {
   async function submitFeedback() {
     if (!feedbackForm) return;
     try {
-      await axios.post('/api/feedback', {
+      await api.post('/api/feedback', {
         booking_id: feedbackForm.bookingId,
         rating: feedbackForm.rating,
         comment: feedbackForm.comment,

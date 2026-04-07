@@ -40,7 +40,7 @@ export default function ChatWidget() {
     setMessages(m => [...m, { role: 'user', text: query }]);
     setLoading(true);
     try {
-      const res = await axios.post('/api/chatbot/query', { query },
+      const res = await api.post('/api/chatbot/query', { query },
         { headers: { Authorization: `Bearer ${token}` } });
       setMessages(m => [...m, { role: 'bot', text: res.data.response ?? 'No response' }]);
     } catch {

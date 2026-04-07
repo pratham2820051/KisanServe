@@ -47,29 +47,29 @@ export default function AdminPanelPage() {
   const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
-    axios.get('/api/admin/analytics', { headers }).then(r => setAnalytics(r.data)).catch(() => {});
-    axios.get('/api/admin/flagged-reviews', { headers }).then(r => setReviews(r.data?.reviews ?? [])).catch(() => {});
-    axios.get('/api/services', { headers }).then(r => setServices(r.data?.services ?? [])).catch(() => {});
-    axios.get('/api/admin/fraud-stats', { headers }).then(r => setFraudStats(r.data)).catch(() => {});
+    api.get('/api/admin/analytics', { headers }).then(r => setAnalytics(r.data)).catch(() => {});
+    api.get('/api/admin/flagged-reviews', { headers }).then(r => setReviews(r.data?.reviews ?? [])).catch(() => {});
+    api.get('/api/services', { headers }).then(r => setServices(r.data?.services ?? [])).catch(() => {});
+    api.get('/api/admin/fraud-stats', { headers }).then(r => setFraudStats(r.data)).catch(() => {});
   }, []);
 
   async function approveService(id: string) {
     try {
-      await axios.patch(`/api/admin/services/${id}`, { status: 'active' }, { headers });
+      await api.patch(`/api/admin/services/${id}`, { status: 'active' }, { headers });
       setServices(s => s.map(x => x._id === id ? { ...x, status: 'active' } : x));
     } catch { alert('Failed to update service'); }
   }
 
   async function rejectService(id: string) {
     try {
-      await axios.patch(`/api/admin/services/${id}`, { status: 'rejected' }, { headers });
+      await api.patch(`/api/admin/services/${id}`, { status: 'rejected' }, { headers });
       setServices(s => s.map(x => x._id === id ? { ...x, status: 'rejected' } : x));
     } catch { alert('Failed to update service'); }
   }
 
   async function handleReview(id: string, action: 'approve' | 'remove') {
     try {
-      await axios.patch(`/api/admin/reviews/${id}`, { action }, { headers });
+      await api.patch(`/api/admin/reviews/${id}`, { action }, { headers });
       setReviews(r => r.filter(x => x._id !== id));
     } catch { alert('Failed to update review'); }
   }

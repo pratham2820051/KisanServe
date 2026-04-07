@@ -23,7 +23,7 @@ export default function BookingsPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get('/api/bookings', { headers: { Authorization: `Bearer ${token}` } })
+    api.get('/api/bookings', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setBookings(Array.isArray(r.data) ? r.data : []))
       .catch(() => setBookings([]))
       .finally(() => setLoading(false));

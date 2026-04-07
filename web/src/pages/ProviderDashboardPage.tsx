@@ -38,10 +38,10 @@ export default function ProviderDashboardPage() {
   const user = (() => { try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; } })();
 
   useEffect(() => {
-    axios.get('/api/provider/bookings', { headers })
+    api.get('/api/provider/bookings', { headers })
       .then(r => setGrouped(r.data ?? {}))
       .catch(() => {});
-    axios.get('/api/provider/earnings', { headers })
+    api.get('/api/provider/earnings', { headers })
       .then(r => setEarnings(r.data))
       .catch(() => {});
   }, []);
@@ -53,11 +53,11 @@ export default function ProviderDashboardPage() {
 
   async function updateBooking(id: string, status: string) {
     try {
-      await axios.patch(`/api/bookings/${id}`, { status }, { headers });
+      await api.patch(`/api/bookings/${id}`, { status }, { headers });
       // Refresh bookings
-      const r = await axios.get('/api/provider/bookings', { headers });
+      const r = await api.get('/api/provider/bookings', { headers });
       setGrouped(r.data ?? {});
-      const e = await axios.get('/api/provider/earnings', { headers });
+      const e = await api.get('/api/provider/earnings', { headers });
       setEarnings(e.data);
     } catch { alert('Failed to update booking'); }
   }
@@ -65,7 +65,7 @@ export default function ProviderDashboardPage() {
   async function addService() {
     if (!form.price || !form.description) return;
     try {
-      await axios.post('/api/services', {
+      await api.post('/api/services', {
         type: form.type,
         price: Number(form.price),
         description: form.description,

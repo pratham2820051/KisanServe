@@ -35,7 +35,7 @@ export default function GpsTrackerPage() {
   const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
-    axios.get('/api/bookings', { headers })
+    api.get('/api/bookings', { headers })
       .then(r => {
         const all = Array.isArray(r.data) ? r.data : [];
         setBookings(all.filter((b: Booking) => ['Accepted', 'InProgress'].includes(b.status)));

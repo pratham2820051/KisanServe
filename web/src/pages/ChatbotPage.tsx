@@ -23,7 +23,7 @@ export default function ChatbotPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('/api/chatbot/query',
+      const res = await api.post('/api/chatbot/query',
         { query: userMsg },
         { headers: { Authorization: `Bearer ${token}` } }
       );

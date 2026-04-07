@@ -82,7 +82,7 @@ export default function LandingPage() {
 
   async function fetchWeatherByCoords(lat: number, lon: number) {
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=bd5e378503939ddaee76f12ad7a97608&units=metric`
       );
       setWeather({
@@ -104,7 +104,7 @@ export default function LandingPage() {
 
   async function fetchWeatherByCity(city: string) {
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=bd5e378503939ddaee76f12ad7a97608&units=metric`
       );
       setWeather({
@@ -126,7 +126,7 @@ export default function LandingPage() {
 
   // Fetch real platform stats from backend
   useEffect(() => {
-    axios.get('/api/stats')
+    api.get('/api/stats')
       .then(res => setPlatformStats(res.data))
       .catch(() => setPlatformStats(null));
   }, []);
