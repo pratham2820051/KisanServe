@@ -4,7 +4,7 @@ import api from '../api/axios';
 const BELGAUM = { lat: 15.8497, lng: 74.4977 };
 
 interface Booking {
-  _id: string;
+  id: string;
   service_id?: { type: string; price: number };
   provider_id?: { name: string; phone: string };
   status: string;
@@ -37,7 +37,7 @@ export default function GpsTrackerPage() {
   useEffect(() => {
     api.get('/api/bookings', { headers })
       .then(r => {
-        const all = Array.isArray(r.data) ? r.data : [];
+        const all = Array.isArray(r.data?.bookings) ? r.data.bookings : [];
         setBookings(all.filter((b: Booking) => ['Accepted', 'InProgress'].includes(b.status)));
       }).catch(() => {});
   }, []);
@@ -129,7 +129,7 @@ export default function GpsTrackerPage() {
     if (wsRef.current) wsRef.current.close();
     setWsStatus('connecting');
     setSelectedBooking(booking);
-    const ws = new WebSocket(`ws://localhost:3000/ws/tracking/${booking._id}?token=${token}`);
+    const ws = new WebSocket(`ws://localhost:3000/ws/tracking/${booking.id}?token=${token}`);
     wsRef.current = ws;
     ws.onopen = () => setWsStatus('connected');
     ws.onmessage = e => {
@@ -210,13 +210,13 @@ export default function GpsTrackerPage() {
         {bookings.length === 0
           ? <p style={{ fontSize: 13, color: '#888', margin: 0 }}>No active bookings. Book a service to track the provider.</p>
           : bookings.map(b => (
-            <div key={b._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
+            <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>{b.service_id?.type ?? 'Service'}</div>
                 <div style={{ fontSize: 11, color: '#888' }}>{b.provider_id?.name ?? 'Provider'} · {b.status}</div>
               </div>
               <button style={{ ...btn.green, padding: '6px 12px', fontSize: 12 }} onClick={() => connectWs(b)}>
-                {selectedBooking?._id === b._id ? '📡 Tracking' : '▶ Track'}
+                {selectedBooking?.id === b.id ? '📡 Tracking' : '▶ Track'}
               </button>
             </div>
           ))
