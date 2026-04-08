@@ -101,7 +101,7 @@ export default function LoginPage() {
     } finally { setLoading(false); }
   }
 
-  if (!splashDone) return <SplashAnimation onDone={() => setSplashDone(true)} />;
+  if (!splashDone) return null;
 
   const accentColor = ROLES.find(r => r.value === role)?.color ?? '#2d6a4f';
 
