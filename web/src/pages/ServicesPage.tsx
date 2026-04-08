@@ -46,6 +46,19 @@ export default function ServicesPage() {
   const [bookingDate, setBookingDate] = useState<Record<string, string>>({});
   const [timeSlot, setTimeSlot] = useState<Record<string, string>>({});
   const [offlineMsg, setOfflineMsg] = useState('');
+  const [transportFrom, setTransportFrom] = useState<Record<string, string>>({});
+  const [transportTo, setTransportTo] = useState<Record<string, string>>({});
+  const [transportKm, setTransportKm] = useState<Record<string, number>>({});
+
+  const DIESEL_RATE = 24; // ₹ per km
+
+  function calcDistance(from: string, to: string): number {
+    // Simple estimate: 1 word difference = ~5km, use string length diff as proxy
+    // Real implementation would use Google Maps API
+    if (!from.trim() || !to.trim()) return 0;
+    const base = Math.abs(from.length - to.length) * 2 + from.split(' ').length * 3 + 5;
+    return Math.min(Math.max(base, 5), 150); // between 5-150km
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -187,10 +200,35 @@ export default function ServicesPage() {
               <p style={styles.meta}>🗓️ Best time: {s.optimal_booking_window}</p>
             )}
 
-            <p style={styles.price}>₹{s.price}</p>
+            <p style={styles.price}>₹{s.price}{transportKm[s.id] ? ` + ₹${transportKm[s.id] * DIESEL_RATE} fuel` : ''}</p>
+            {transportKm[s.id] > 0 && (
+              <div style={{ background: '#d8f3dc', borderRadius: 8, padding: '8px 12px', fontSize: 13, color: '#1b4332', marginBottom: 4 }}>
+                📍 {transportKm[s.id]} km · Fuel: ₹{transportKm[s.id] * DIESEL_RATE} · Total: ₹{s.price + transportKm[s.id] * DIESEL_RATE}
+              </div>
+            )}
 
             {!booked[s.id] && (
               <>
+                {(s.type === 'Transport' || s.category === 'Transport') && (
+                  <>
+                    <input style={styles.input} type="text" placeholder="📍 From (your village/location)"
+                      value={transportFrom[s.id] || ''}
+                      onChange={e => {
+                        const from = e.target.value;
+                        setTransportFrom(f => ({ ...f, [s.id]: from }));
+                        const km = calcDistance(from, transportTo[s.id] || '');
+                        setTransportKm(k => ({ ...k, [s.id]: km }));
+                      }} />
+                    <input style={styles.input} type="text" placeholder="🏁 To (destination)"
+                      value={transportTo[s.id] || ''}
+                      onChange={e => {
+                        const to = e.target.value;
+                        setTransportTo(t => ({ ...t, [s.id]: to }));
+                        const km = calcDistance(transportFrom[s.id] || '', to);
+                        setTransportKm(k => ({ ...k, [s.id]: km }));
+                      }} />
+                  </>
+                )}
                 <input type="date" style={styles.input}
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
