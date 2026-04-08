@@ -52,6 +52,8 @@ export default function AdminPanelPage() {
   const [kb, setKb] = useState<KBEntry[]>([]);
   const [kbForm, setKbForm] = useState({ question: '', keywords: '', answer: '' });
   const [kbMsg, setKbMsg] = useState('');
+  const [pdfMsg, setPdfMsg] = useState('');
+  const [pdfLoading, setPdfLoading] = useState(false);
   const token = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -245,6 +247,38 @@ export default function AdminPanelPage() {
 
       {tab === 'knowledge' && (
         <div style={{ marginTop: 16 }}>
+          {/* PDF Upload */}
+          <div style={{ ...styles.section, marginBottom: 20, background: '#f0faf4', border: '1px solid #b7e4c7' }}>
+            <h3 style={{ ...styles.sectionTitle, marginBottom: 8 }}>📄 Upload PDF to Chatbot</h3>
+            <p style={{ fontSize: 13, color: '#666', marginBottom: 12 }}>
+              Upload any farming PDF — it will be parsed and all paragraphs saved as chatbot knowledge automatically.
+            </p>
+            <input type="file" accept="application/pdf"
+              style={{ marginBottom: 10, fontSize: 13 }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setPdfLoading(true); setPdfMsg('');
+                const formData = new FormData();
+                formData.append('pdf', file);
+                try {
+                  const res = await api.post('/api/chatbot/knowledge/pdf', formData, {
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+                  });
+                  setPdfMsg(`✅ ${res.data.message}`);
+                  const r = await api.get('/api/chatbot/knowledge', { headers });
+                  setKb(r.data?.entries ?? []);
+                } catch (err: any) {
+                  setPdfMsg('❌ ' + (err.response?.data?.error || 'Failed to process PDF'));
+                } finally {
+                  setPdfLoading(false);
+                  e.target.value = '';
+                }
+              }}
+            />
+            {pdfLoading && <p style={{ fontSize: 13, color: '#2d6a4f' }}>⏳ Processing PDF...</p>}
+            {pdfMsg && <p style={{ fontSize: 13, color: pdfMsg.startsWith('✅') ? '#2d6a4f' : '#e63946', marginTop: 4 }}>{pdfMsg}</p>}
+          </div>
           <div style={{ ...styles.section, marginBottom: 20 }}>
             <h3 style={{ ...styles.sectionTitle, marginBottom: 16 }}>➕ Add New Q&A to Chatbot</h3>
             <label style={styles.kbLabel}>Question (what farmers will ask)</label>

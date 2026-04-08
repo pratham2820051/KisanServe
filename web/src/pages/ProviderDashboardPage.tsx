@@ -12,7 +12,7 @@ interface Booking {
 }
 
 interface Earnings {
-  totalRevenue: number;
+  totalEarnings: number;
   completedBookings: number;
 }
 
@@ -100,15 +100,14 @@ export default function ProviderDashboardPage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <span style={{ ...styles.pill, background: STATUS_COLORS[b.status] ?? '#ccc' }}>{b.status}</span>
-              <strong style={{ fontSize: 14 }}>{TYPE_LABELS[b.services?.type ?? ''] ?? b.services?.type ?? 'Service'}</strong>
+              <strong style={{ fontSize: 14 }}>{TYPE_LABELS[b.service_id?.type ?? ''] ?? b.service_id?.type ?? 'Service'}</strong>
             </div>
-            <p style={styles.sub}>👤 {b.users?.name || b.users?.phone || 'Farmer'}</p>
-            {b.users?.phone && <p style={styles.sub}>📞 {b.users.phone}</p>}
-            <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
-            <p style={styles.sub}>💰 ₹{b.services?.price ?? '—'}</p>
-            {b.created_at && (
+            <p style={styles.sub}>👤 {b.farmer_id?.name || b.farmer_id?.phone || 'Farmer'}</p>
+            <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.timeSlot ? `| ${b.timeSlot}` : ''}</p>
+            <p style={styles.sub}>💰 ₹{b.service_id?.price ?? '—'}</p>
+            {b.createdAt && (
               <p style={{ ...styles.sub, color: '#aaa', fontSize: 11 }}>
-                🕐 Raised: {new Date(b.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                🕐 Raised: {new Date(b.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
               </p>
             )}
           </div>
@@ -160,7 +159,7 @@ export default function ProviderDashboardPage() {
               { icon: '▶', label: 'In Progress', value: active.length, color: '#4cc9f0' },
               { icon: '✅', label: 'Completed', value: grouped['Completed']?.length ?? 0, color: '#52b788' },
               { icon: '❌', label: 'Cancelled', value: grouped['Cancelled']?.length ?? 0, color: '#e63946' },
-              { icon: '💰', label: 'Total Earnings', value: `₹${(earnings?.totalRevenue ?? 0).toLocaleString()}`, color: '#2d6a4f' },
+              { icon: '💰', label: 'Total Earnings', value: `₹${(earnings?.totalEarnings ?? 0).toLocaleString()}`, color: '#2d6a4f' },
             ].map(c => (
               <div key={c.label} style={styles.statCard}>
                 <div style={styles.statIcon}>{c.icon}</div>
