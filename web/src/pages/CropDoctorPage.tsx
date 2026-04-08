@@ -84,6 +84,7 @@ export default function CropDoctorPage() {
   const [mode, setMode] = useState<'input' | 'result'>('input');
   const [description, setDescription] = useState('');
   const [result, setResult] = useState<typeof DISEASE_KB[0] | null>(null);
+  const [showContact, setShowContact] = useState(false);
 
   function analyze() {
     if (!description.trim()) return;
@@ -142,12 +143,56 @@ export default function CropDoctorPage() {
                 <h4 style={styles.secTitle}>🛡️ Prevention</h4>
                 <p style={styles.secText}>{result.prevention}</p>
               </div>
-              <div style={styles.disclaimer}>
-                ⚠️ AI-assisted diagnosis. For confirmation, consult your local agriculture officer or KVK (Krishi Vigyan Kendra).
+              <div style={{ ...styles.disclaimer, cursor: 'pointer' }} onClick={() => setShowContact(true)}>
+                ⚠️ AI-assisted diagnosis. For confirmation, consult your local agriculture officer or KVK. <span style={{ color: '#2d6a4f', fontWeight: 700 }}>Tap to contact →</span>
               </div>
               <button style={styles.btn} onClick={() => { setMode('input'); setDescription(''); }}>← New Diagnosis</button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Contact Modal */}
+      {showContact && (
+        <div style={modal.overlay} onClick={() => setShowContact(false)}>
+          <div style={modal.box} onClick={e => e.stopPropagation()}>
+            <h3 style={{ margin: '0 0 4px', color: '#1b4332' }}>📞 Expert Contact</h3>
+            <p style={{ fontSize: 13, color: '#888', margin: '0 0 20px' }}>Get confirmation from agricultural experts</p>
+
+            <div style={modal.item}>
+              <div>
+                <div style={modal.label}>🌾 Kisan Call Centre</div>
+                <div style={modal.sub}>Free · 24/7 · All languages</div>
+              </div>
+              <div style={modal.btns}>
+                <a href="tel:1800-180-1551" style={modal.callBtn}>📞 Call</a>
+              </div>
+            </div>
+
+            <div style={modal.item}>
+              <div>
+                <div style={modal.label}>🏛️ KVK Helpline</div>
+                <div style={modal.sub}>Krishi Vigyan Kendra</div>
+              </div>
+              <div style={modal.btns}>
+                <a href="tel:1800-180-1551" style={modal.callBtn}>📞 Call</a>
+                <a href="https://wa.me/911800180155" target="_blank" rel="noreferrer" style={modal.waBtn}>💬 WhatsApp</a>
+              </div>
+            </div>
+
+            <div style={modal.item}>
+              <div>
+                <div style={modal.label}>🌿 PM Kisan Helpline</div>
+                <div style={modal.sub}>Government farmer support</div>
+              </div>
+              <div style={modal.btns}>
+                <a href="tel:155261" style={modal.callBtn}>📞 Call</a>
+                <a href="https://wa.me/911552610000" target="_blank" rel="noreferrer" style={modal.waBtn}>💬 WhatsApp</a>
+              </div>
+            </div>
+
+            <button style={{ ...styles.btn, width: '100%', marginTop: 16 }} onClick={() => setShowContact(false)}>Close</button>
+          </div>
         </div>
       )}
     </div>
@@ -157,8 +202,7 @@ export default function CropDoctorPage() {
 const styles: Record<string, React.CSSProperties> = {
   card: { background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', maxWidth: 680 },
   textarea: { width: '100%', padding: '12px 14px', fontSize: 14, borderRadius: 8, border: '1px solid #ccc', boxSizing: 'border-box', marginBottom: 12, resize: 'vertical' },
-  btn: { background: '#2d6a4f', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 15, cursor: 'pointer' },
-  quickRow: { display: 'flex', flexWrap: 'wrap', gap: 6 },
+  btn: { background: '#2d6a4f', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 15, cursor: 'pointer' },  quickRow: { display: 'flex', flexWrap: 'wrap', gap: 6 },
   quickBtn: { background: '#d8f3dc', color: '#2d6a4f', border: 'none', borderRadius: 20, padding: '5px 12px', cursor: 'pointer', fontSize: 12 },
   resultCard: { background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', maxWidth: 680 },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
@@ -167,4 +211,15 @@ const styles: Record<string, React.CSSProperties> = {
   secTitle: { margin: '0 0 8px', color: '#2d6a4f' },
   secText: { margin: 0, color: '#444', lineHeight: 1.6 },
   disclaimer: { background: '#fff3cd', borderRadius: 8, padding: 12, fontSize: 13, color: '#856404', marginBottom: 16 },
+};
+
+const modal: Record<string, React.CSSProperties> = {
+  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 },
+  box: { background: '#fff', borderRadius: 16, padding: 24, width: '100%', maxWidth: 400, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' },
+  item: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid #f0f0f0' },
+  label: { fontSize: 15, fontWeight: 600, color: '#1b4332' },
+  sub: { fontSize: 12, color: '#888', marginTop: 2 },
+  btns: { display: 'flex', gap: 8 },
+  callBtn: { background: '#2d6a4f', color: '#fff', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, textDecoration: 'none', display: 'inline-block' },
+  waBtn: { background: '#25D366', color: '#fff', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, textDecoration: 'none', display: 'inline-block' },
 };
