@@ -2,8 +2,6 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
-// @ts-ignore
-import pdfParse from 'pdf-parse';
 
 const KB_PATH = path.join(__dirname, '../data/farmingKnowledge.json');
 
@@ -97,10 +95,13 @@ export async function uploadPdfKnowledge(req: Request, res: Response): Promise<v
 
   let text = '';
   try {
+    // Dynamic import to avoid pdf-parse test file issue
+    const pdfParse = require('pdf-parse/lib/pdf-parse.js');
     const data = await pdfParse(req.file.buffer);
     text = data.text;
-  } catch {
-    res.status(400).json({ error: 'Failed to parse PDF. Make sure it is a valid text-based PDF.' });
+  } catch (e) {
+    console.error('PDF parse error:', e);
+    res.status(400).json({ error: 'Failed to parse PDF. Make sure it is a valid text-based PDF (not a scanned image).' });
     return;
   }
 
