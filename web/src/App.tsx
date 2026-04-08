@@ -60,7 +60,7 @@ const LANGUAGES = [
 // Top bar for Farmer — red logout + language dropdown
 function FarmerTopBar() {
   const user = getUser();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const currentLang = LANGUAGES.find(l => l.code === i18n.language) ?? LANGUAGES[0];
 
@@ -85,7 +85,7 @@ function FarmerTopBar() {
         </div>
         <button style={topBar.logoutBtn}
           onClick={() => { localStorage.clear(); window.location.replace('/login'); }}>
-          🚪 Logout
+          🚪 {t('common.logout')}
         </button>
       </div>
     </div>
@@ -94,7 +94,7 @@ function FarmerTopBar() {
 
 // Simple top bar for Provider/Admin
 function SimpleTopBar({ title }: { title: string }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const currentLang = LANGUAGES.find(l => l.code === i18n.language) ?? LANGUAGES[0];
 
@@ -119,7 +119,7 @@ function SimpleTopBar({ title }: { title: string }) {
         </div>
         <button style={topBar.logoutBtn}
           onClick={() => { localStorage.clear(); window.location.replace('/login'); }}>
-          🚪 Logout
+          🚪 {t('common.logout')}
         </button>
       </div>
     </div>
@@ -129,14 +129,15 @@ function SimpleTopBar({ title }: { title: string }) {
 // Bottom nav grid for Farmer
 function FarmerBottomNav() {
   const location = useLocation();
+  const { t } = useTranslation();
   const nav = [
-    { href: '/dashboard', icon: '🏠', label: 'Home' },
-    { href: '/services', icon: '🛒', label: 'Services' },
-    { href: '/bookings', icon: '📋', label: 'Bookings' },
-    { href: '/irrigation', icon: '💧', label: 'Irrigation' },
-    { href: '/crop-doctor', icon: '🌿', label: 'Crop Doctor' },
-    { href: '/gps-tracker', icon: '📍', label: 'GPS' },
-    { href: '/offline', icon: '📦', label: 'Offline' },
+    { href: '/dashboard', icon: '🏠', label: t('nav.home') },
+    { href: '/services', icon: '🛒', label: t('nav.services') },
+    { href: '/bookings', icon: '📋', label: t('nav.bookings') },
+    { href: '/irrigation', icon: '💧', label: t('nav.irrigation') },
+    { href: '/crop-doctor', icon: '🌿', label: t('nav.cropDoctor') },
+    { href: '/gps-tracker', icon: '📍', label: t('nav.gps') },
+    { href: '/offline', icon: '📦', label: t('nav.offline') },
   ];
 
   return (

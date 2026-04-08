@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 interface Booking {
@@ -33,6 +34,7 @@ const ALERT_ICONS: Record<string, string> = {
 };
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [tab, setTab] = useState<'overview' | 'bookings' | 'alerts'>('overview');
@@ -109,14 +111,14 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h2 style={{ color: '#2d6a4f' }}>🧑‍🌾 Farmer Dashboard</h2>
-      <p style={{ color: '#666', marginBottom: 20 }}>Welcome, {user.name || 'Farmer'}! Here's your farming overview.</p>
+      <h2 style={{ color: '#2d6a4f' }}>{t('dashboard.title')}</h2>
+      <p style={{ color: '#666', marginBottom: 20 }}>{t('dashboard.welcome', { name: user.name || 'Farmer' })}</p>
 
       <div style={styles.tabs}>
         {[
-          { key: 'overview', label: '📊 Overview' },
-          { key: 'bookings', label: `📋 My Bookings (${bookings.length})` },
-          { key: 'alerts', label: `🔔 Alerts (${alerts.length})` },
+          { key: 'overview', label: `📊 ${t('dashboard.overview')}` },
+          { key: 'bookings', label: `📋 ${t('dashboard.myBookings')} (${bookings.length})` },
+          { key: 'alerts', label: `🔔 ${t('dashboard.alerts')} (${alerts.length})` },
         ].map(t => (
           <button key={t.key} style={{ ...styles.tab, ...(tab === t.key ? styles.activeTab : {}) }}
             onClick={() => setTab(t.key as any)}>

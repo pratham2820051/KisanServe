@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 interface Service {
@@ -35,6 +36,7 @@ const TIME_SLOTS = ['08:00-10:00', '10:00-12:00', '12:00-14:00', '14:00-16:00', 
 import { cacheServices, getCachedServices, isOnline, enqueueBooking } from '../store/offlineStore';
 
 export default function ServicesPage() {
+  const { t } = useTranslation();
   const [services, setServices] = useState<Service[]>([]);
   const [filtered, setFiltered] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +119,7 @@ export default function ServicesPage() {
 
   return (
     <div>
-      <h2 style={{ color: '#2d6a4f' }}>🛒 Available Services</h2>
+      <h2 style={{ color: '#2d6a4f' }}>🛒 {t('services.title')}</h2>
 
       <div style={styles.filterRow}>
         {CATEGORIES.map(cat => (
@@ -205,7 +207,7 @@ export default function ServicesPage() {
               style={booked[s.id] ? styles.bookedBtn : styles.bookBtn}
               onClick={() => book(s.id)}
               disabled={booked[s.id]}>
-              {booked[s.id] ? '✓ Booked Successfully' : 'Book Now'}
+              {booked[s.id] ? `✓ ${t('services.booked')}` : t('services.bookNow')}
             </button>
           </div>
         ))}

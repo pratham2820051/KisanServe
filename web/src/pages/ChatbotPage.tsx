@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 interface Message { role: 'user' | 'bot'; text: string; }
@@ -15,8 +16,9 @@ const QUICK_QUESTIONS = [
 ];
 
 export default function ChatbotPage() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: '🌾 Namaste! I am KisanServe AI — your farming assistant.\n\nI can help you with:\n• Crop diseases & treatment\n• Fertilizer & irrigation advice\n• Government schemes for farmers\n• Pest control & soil health\n• Market prices & weather tips\n\nAsk me anything about farming!' }
+    { role: 'bot', text: t('chatbot.welcome') + '\n\nI can help you with:\n• Crop diseases & treatment\n• Fertilizer & irrigation advice\n• Government schemes for farmers\n• Pest control & soil health\n• Market prices & weather tips\n\nAsk me anything about farming!' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,8 +54,8 @@ export default function ChatbotPage() {
       <div style={s.header}>
         <span style={s.headerIcon}>🤖</span>
         <div>
-          <div style={s.headerTitle}>KisanServe AI Assistant</div>
-          <div style={s.headerSub}>Powered by Gemini AI · Farming experts only</div>
+          <div style={s.headerTitle}>{t('chatbot.title')}</div>
+          <div style={s.headerSub}>{t('chatbot.subtitle')}</div>
         </div>
         <span style={s.onlineDot}>● Online</span>
       </div>
@@ -98,7 +100,7 @@ export default function ChatbotPage() {
         <input style={s.input} value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-          placeholder="Ask about crops, soil, pests, schemes..."
+          placeholder={t('chatbot.placeholder')}
           disabled={loading} />
         <button style={{ ...s.btn, opacity: loading || !input.trim() ? 0.6 : 1 }}
           onClick={() => send()} disabled={loading || !input.trim()}>
