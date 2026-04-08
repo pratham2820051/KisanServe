@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [tab, setTab] = useState<'overview' | 'bookings' | 'alerts'>('overview');
-  const [feedbackForm, setFeedbackForm] = useState<{ bookingId: string; rating: number; comment: string } | null>(null);
+  const [feedbackForm, setFeedbackForm] = useState<{ bookingId: string; revieweeId: string; rating: number; comment: string } | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState('');
   const token = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
@@ -66,6 +66,7 @@ export default function DashboardPage() {
     try {
       await api.post('/api/feedback', {
         booking_id: feedbackForm.bookingId,
+        reviewee_id: feedbackForm.revieweeId,
         rating: feedbackForm.rating,
         comment: feedbackForm.comment,
       }, { headers });
@@ -100,7 +101,7 @@ export default function DashboardPage() {
               <button style={styles.redBtn} onClick={() => cancelBooking(b.id)}>✗ Cancel</button>
             )}
             {b.status === 'Completed' && (
-              <button style={styles.greenBtn} onClick={() => setFeedbackForm({ bookingId: b.id, rating: 5, comment: '' })}>
+              <button style={styles.greenBtn} onClick={() => setFeedbackForm({ bookingId: b.id, revieweeId: (b as any).provider_id, rating: 5, comment: '' })}>
                 ⭐ Rate
               </button>
             )}
