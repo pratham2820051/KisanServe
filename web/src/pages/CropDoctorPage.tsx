@@ -48,6 +48,9 @@ const DISEASE_KB = [
   { keywords: ['sugarcane wilt', 'cane wilt', 'wilting sugarcane', 'yellowing cane', 'drying cane'], disease: 'Wilt Disease of Sugarcane', crop: 'Sugarcane', severity: 'Medium', treatment: 'Remove and destroy affected plants. Improve soil drainage and avoid excess irrigation. Apply balanced fertilizers.', prevention: 'Use healthy disease-free planting material. Follow crop rotation. Maintain proper field hygiene and drainage.' },
   { keywords: ['leaf scald', 'scald', 'white stripe cane', 'water soaked cane leaf', 'pencil streak'], disease: 'Leaf Scald of Sugarcane', crop: 'Sugarcane', severity: 'Medium', treatment: 'Remove and destroy infected plants. Avoid spreading infection through cutting tools. Disinfect tools with bleach solution.', prevention: 'Use disease-free certified setts. Disinfect tools regularly. Monitor field conditions and remove infected plants early.' },
   { keywords: ['grassy shoot', 'grassy sugarcane', 'excessive tillers', 'pale yellow shoots', 'phytoplasma cane'], disease: 'Grassy Shoot Disease of Sugarcane', crop: 'Sugarcane', severity: 'High', treatment: 'Uproot and destroy all infected plants immediately. Control leafhopper insect vectors using Imidacloprid 0.5ml/L spray.', prevention: 'Use certified healthy setts from disease-free nurseries. Avoid ratoon crops from infected fields. Control insect vectors.' },
+  { keywords: ['brown spot rice', 'brown spot', 'helminthosporium', 'sesame spot', 'brown lesion rice'], disease: 'Brown Spot of Rice', crop: 'Rice', severity: 'Medium', treatment: 'Spray Mancozeb 75WP at 2.5g/L or Propiconazole 25EC at 1ml/L. Improve soil nutrition especially potassium and phosphorus.', prevention: 'Use certified seeds. Maintain proper fertilization. Avoid water stress. Treat seeds with Thiram before sowing.' },
+  { keywords: ['false smut', 'green smut', 'orange ball rice', 'green ball grain', 'ustilaginoidea'], disease: 'False Smut of Rice', crop: 'Rice', severity: 'Low', treatment: 'Apply Propiconazole 25EC at 1ml/L during flowering stage. Remove and destroy infected grains before harvest.', prevention: 'Use clean certified seeds. Avoid excess nitrogen fertilizer. Spray fungicide at booting stage preventively.' },
+  { keywords: ['stem rot rice', 'rice stem rot', 'black sclerotia', 'lodging rice', 'water mark rice'], disease: 'Stem Rot of Rice', crop: 'Rice', severity: 'High', treatment: 'Apply Carbendazim 50WP at 1g/L. Remove infected plants. Drain field and avoid excess nitrogen.', prevention: 'Avoid excess nitrogen. Practice crop rotation. Proper drainage. Remove crop debris after harvest.' },
   { keywords: ['hello', 'hi', 'help', 'namaste', 'what can you do'], disease: 'Welcome', crop: 'All', severity: 'Low', treatment: 'I can diagnose crop diseases! Describe what you see on your crop — color changes, spots, holes, wilting, insects, etc.', prevention: 'Try: "yellow leaves", "brown spots on tomato", "white powder on wheat", "holes in cotton", "wilting plant"' },
 ];
 
@@ -74,6 +77,7 @@ const QUICK = [
   'blight tomato', 'rice blast', 'fall armyworm', 'mealybug',
   'nematode root knot', 'zinc deficiency', 'fruit cracking', 'grain mold',
   'sugarcane smut', 'sugarcane wilt', 'leaf scald', 'grassy shoot',
+  'brown spot rice', 'false smut', 'stem rot rice',
 ];
 
 export default function CropDoctorPage() {
