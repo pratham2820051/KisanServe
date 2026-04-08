@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase';
 
 export async function createBooking(req: Request, res: Response): Promise<void> {
   const user = req.user!;
-  const { service_id, date, timeSlot } = req.body;
+  const { service_id, date, timeSlot, fromLocation, toLocation, distanceKm } = req.body;
 
   if (!service_id || !date || !timeSlot) { res.status(400).json({ error: 'service_id, date and timeSlot are required' }); return; }
 
@@ -11,7 +11,6 @@ export async function createBooking(req: Request, res: Response): Promise<void> 
   if (!service) { res.status(404).json({ error: 'Service not found' }); return; }
   if (service.status !== 'active' || !service.availability) { res.status(400).json({ error: 'Service is not available' }); return; }
 
-  // Check duplicate
   const dateStart = new Date(date); dateStart.setUTCHours(0,0,0,0);
   const dateEnd = new Date(dateStart); dateEnd.setUTCDate(dateEnd.getUTCDate() + 1);
   const { data: dup } = await supabase.from('bookings').select('id')
@@ -20,11 +19,15 @@ export async function createBooking(req: Request, res: Response): Promise<void> 
     .in('status', ['Pending','Accepted','InProgress']).single();
   if (dup) { res.status(409).json({ error: 'A booking already exists for this slot' }); return; }
 
-  const { data, error } = await supabase.from('bookings').insert({
+  const insertData: Record<string, unknown> = {
     farmer_id: user.userId, service_id, provider_id: service.provider_id,
     date, time_slot: timeSlot, status: 'Pending',
-  }).select().single();
+  };
+  if (fromLocation) insertData.from_location = fromLocation;
+  if (toLocation) insertData.to_location = toLocation;
+  if (distanceKm) insertData.distance_km = distanceKm;
 
+  const { data, error } = await supabase.from('bookings').insert(insertData).select().single();
   if (error) { res.status(500).json({ error: 'Failed to create booking' }); return; }
   res.status(201).json({ booking: data });
 }

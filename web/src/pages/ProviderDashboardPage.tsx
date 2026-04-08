@@ -9,6 +9,9 @@ interface Booking {
   date: string;
   time_slot?: string;
   created_at?: string;
+  from_location?: string;
+  to_location?: string;
+  distance_km?: number;
 }
 
 interface Earnings {
@@ -106,6 +109,7 @@ export default function ProviderDashboardPage() {
             {b.users?.phone && <p style={styles.sub}>📞 {b.users.phone}</p>}
             <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
             <p style={styles.sub}>💰 ₹{b.services?.price ?? '—'}</p>
+            {b.from_location && <p style={styles.sub}>📍 {b.from_location} → {b.to_location} {b.distance_km ? `(${b.distance_km} km)` : ''}</p>}
             {b.created_at && (
               <p style={{ ...styles.sub, color: '#aaa', fontSize: 11 }}>
                 🕐 Raised: {new Date(b.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}

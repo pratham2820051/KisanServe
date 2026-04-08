@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 type Role = 'Farmer' | 'Service_Provider' | 'Admin';
@@ -13,6 +14,7 @@ const ROLES: { value: Role; icon: string; label: string; color: string }[] = [
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>('login');
   const [selectedRole, setSelectedRole] = useState<Role>('Farmer');
   const [form, setForm] = useState({ name: '', phone: '', password: '' });

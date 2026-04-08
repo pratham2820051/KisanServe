@@ -9,6 +9,9 @@ interface Booking {
   status: string;
   date: string;
   time_slot?: string;
+  from_location?: string;
+  to_location?: string;
+  distance_km?: number;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -51,6 +54,7 @@ export default function BookingsPage() {
             {b.users?.phone && <p style={styles.meta}>📞 {b.users.phone}</p>}
             <p style={styles.meta}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
             <p style={styles.meta}>💰 ₹{b.services?.price ?? '—'}</p>
+            {b.from_location && <p style={styles.meta}>📍 {b.from_location} → {b.to_location} {b.distance_km ? `· ${b.distance_km} km` : ''}</p>}
           </div>
         ))}
       </div>

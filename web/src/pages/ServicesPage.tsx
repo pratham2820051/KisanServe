@@ -134,7 +134,14 @@ export default function ServicesPage() {
 
     try {
       await api.post('/api/bookings',
-        { service_id: serviceId, date, timeSlot: slot },
+        {
+          service_id: serviceId,
+          date,
+          timeSlot: slot,
+          fromLocation: transportFrom[serviceId] || undefined,
+          toLocation: transportTo[serviceId] || undefined,
+          distanceKm: transportKm[serviceId] || undefined,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setBooked(b => ({ ...b, [serviceId]: true }));
