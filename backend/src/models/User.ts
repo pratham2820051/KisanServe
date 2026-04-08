@@ -23,17 +23,9 @@ const UserSchema = new Schema<IUser>(
   {
     name: { type: String, default: '' },
     phone: { type: String, required: true, unique: true, index: true },
-    role: {
-      type: String,
-      enum: ['Farmer', 'Service_Provider', 'Admin'],
-      required: true,
-    },
+    role: { type: String, enum: ['Farmer', 'Service_Provider', 'Admin'], required: true },
     location: { type: String, default: '' },
-    languagePreference: {
-      type: String,
-      enum: ['en', 'hi', 'kn', 'mr', 'te', 'ta', 'ml'],
-      default: 'en',
-    },
+    languagePreference: { type: String, enum: ['en', 'hi', 'kn', 'mr', 'te', 'ta', 'ml'], default: 'en' },
     trust_score: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
     otpHash: { type: String },

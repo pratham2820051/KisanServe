@@ -1,106 +1,39 @@
 import { Request, Response } from 'express';
-import { Feedback } from '../models/Feedback';
-import { Booking } from '../models/Booking';
-import { Service } from '../models/Service';
-import { checkFraud } from '../services/fraudDetector';
+import { supabase } from '../config/supabase';
 
-/**
- * POST /feedback
- * Allows a Farmer or Service_Provider to submit a rating (1–5) + optional comment
- * for a completed booking. Each party may submit at most one review per booking.
- * After submission, if the reviewee is a Service_Provider, their average rating is
- * recalculated and propagated to all their Service documents so it is visible in
- * Marketplace listings within 60 seconds.
- *
- * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5
- */
 export async function submitFeedback(req: Request, res: Response): Promise<void> {
   const user = req.user!;
-  const { booking_id, rating, comment } = req.body as {
-    booking_id?: string;
-    rating?: unknown;
-    comment?: string;
-  };
+  const { booking_id, reviewee_id, rating, comment } = req.body;
 
-  // --- Validate required fields ---
-  if (!booking_id) {
-    res.status(400).json({ error: 'Missing required field: booking_id' });
-    return;
+  if (!booking_id || !reviewee_id || !rating) { res.status(400).json({ error: 'booking_id, reviewee_id and rating are required' }); return; }
+  if (rating < 1 || rating > 5) { res.status(400).json({ error: 'Rating must be between 1 and 5' }); return; }
+  if (user.userId === reviewee_id) { res.status(400).json({ error: 'Cannot review yourself' }); return; }
+
+  const { data: booking } = await supabase.from('bookings').select('*').eq('id', booking_id).single();
+  if (!booking || booking.status !== 'Completed') { res.status(400).json({ error: 'Can only review completed bookings' }); return; }
+
+  const { data: existing } = await supabase.from('feedback').select('id').eq('booking_id', booking_id).eq('reviewer_id', user.userId).single();
+  if (existing) { res.status(409).json({ error: 'You have already reviewed this booking' }); return; }
+
+  const { data, error } = await supabase.from('feedback').insert({
+    booking_id, reviewer_id: user.userId, reviewee_id, rating, comment,
+  }).select().single();
+
+  if (error) { res.status(500).json({ error: 'Failed to submit feedback' }); return; }
+
+  // Update average rating on services
+  const { data: allFeedback } = await supabase.from('feedback').select('rating').eq('reviewee_id', reviewee_id).eq('is_flagged', false);
+  if (allFeedback && allFeedback.length > 0) {
+    const avg = allFeedback.reduce((s, f) => s + f.rating, 0) / allFeedback.length;
+    await supabase.from('services').update({ average_rating: Math.round(avg * 10) / 10, rating_count: allFeedback.length }).eq('provider_id', reviewee_id);
   }
 
-  const ratingNum = Number(rating);
-  if (!rating || isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5 || !Number.isInteger(ratingNum)) {
-    res.status(400).json({ error: 'rating must be an integer between 1 and 5' });
-    return;
-  }
+  res.status(201).json({ feedback: data });
+}
 
-  // --- Validate booking exists and is Completed (Req 7.1, 7.2) ---
-  const booking = await Booking.findById(booking_id);
-  if (!booking) {
-    res.status(404).json({ error: 'Booking not found' });
-    return;
-  }
-
-  if (booking.status !== 'Completed') {
-    res.status(400).json({ error: 'Feedback can only be submitted for Completed bookings' });
-    return;
-  }
-
-  const farmerId = booking.farmer_id.toString();
-  const providerId = booking.provider_id.toString();
-  const callerId = user.userId;
-
-  // --- Verify caller is a party to this booking ---
-  if (callerId !== farmerId && callerId !== providerId) {
-    res.status(403).json({ error: 'Access denied. You are not a party to this booking.' });
-    return;
-  }
-
-  // --- Determine reviewee (Req 7.1: farmer reviews provider; Req 7.2: provider reviews farmer) ---
-  const revieweeId = callerId === farmerId ? providerId : farmerId;
-
-  // --- Check for duplicate review (Req 7.4) — manual check for a clean error before the DB unique index fires ---
-  const existing = await Feedback.findOne({ booking_id, reviewer_id: callerId });
-  if (existing) {
-    res.status(409).json({ error: 'You have already submitted feedback for this booking' });
-    return;
-  }
-
-  // --- Fraud detection (Req 7.6, 9.4) ---
-  const fraudResult = await checkFraud(revieweeId, ratingNum, req.ip ?? '', callerId, booking_id);
-
-  // --- Create feedback document (flagged reviews are stored but excluded from rating calc) ---
-  const feedback = await Feedback.create({
-    booking_id,
-    reviewer_id: callerId,
-    reviewee_id: revieweeId,
-    rating: ratingNum,
-    comment: comment?.trim() || undefined,
-    is_flagged: fraudResult.isFlagged,
-    flagReason: fraudResult.reason,
-  });
-
-  // --- If reviewee is the Service_Provider and review is not flagged, recalculate and propagate average rating (Req 7.3, 7.5) ---
-  if (revieweeId === providerId && !fraudResult.isFlagged) {
-    const [agg] = await Feedback.aggregate<{ avgRating: number; count: number }>([
-      { $match: { reviewee_id: booking.provider_id, is_flagged: { $ne: true } } },
-      {
-        $group: {
-          _id: null,
-          avgRating: { $avg: '$rating' },
-          count: { $sum: 1 },
-        },
-      },
-    ]);
-
-    if (agg) {
-      const newAvg = Math.round(agg.avgRating * 10) / 10; // one decimal place
-      await Service.updateMany(
-        { provider_id: booking.provider_id },
-        { $set: { averageRating: newAvg, ratingCount: agg.count } }
-      );
-    }
-  }
-
-  res.status(201).json({ feedback });
+export async function getFeedback(req: Request, res: Response): Promise<void> {
+  const { userId } = req.params;
+  const { data, error } = await supabase.from('feedback').select('*, users!reviewer_id(name)').eq('reviewee_id', userId).eq('is_flagged', false);
+  if (error) { res.status(500).json({ error: 'Failed to fetch feedback' }); return; }
+  res.json({ feedback: data });
 }

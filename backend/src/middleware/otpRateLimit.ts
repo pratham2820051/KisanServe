@@ -18,16 +18,15 @@ export async function otpRateLimit(req: Request, res: Response, next: NextFuncti
 
   const key = `otp_rate:${phone.trim()}`;
 
-  const count = await redis.incr(key);
-
-  if (count === 1) {
-    // First request — set expiry
-    await redis.expire(key, TTL_SECONDS);
-  }
-
-  if (count > MAX_OTP_REQUESTS) {
-    res.status(429).json({ error: 'Too many OTP requests. Please try again after 1 hour.' });
-    return;
+  try {
+    const count = await redis.incr(key);
+    if (count === 1) await redis.expire(key, TTL_SECONDS);
+    if (count > MAX_OTP_REQUESTS) {
+      res.status(429).json({ error: 'Too many OTP requests. Please try again after 1 hour.' });
+      return;
+    }
+  } catch {
+    // Redis unavailable — skip rate limiting, allow request
   }
 
   next();

@@ -14,10 +14,9 @@ const connection = { host: redis.options.host || 'localhost', port: redis.option
 
 const MS_IN_24H = 24 * 60 * 60 * 1000;
 
-export function startCalendarWorker(): Worker {
-  const worker = new Worker(
-    'farming-calendar',
-    async (job) => {
+export function startCalendarWorker(): Worker | null {
+  try {
+    const worker = new Worker('farming-calendar', async (job) => {
       const { type } = job.data as { type: string };
 
       switch (type) {
@@ -83,14 +82,12 @@ export function startCalendarWorker(): Worker {
         default:
           console.warn(`[CalendarWorker] Unknown job type: ${type}`);
       }
-    },
-    { connection }
-  );
-
-  worker.on('failed', (job, err) => {
-    console.error(`[CalendarWorker] Job ${job?.id} (type=${job?.data?.type}) failed:`, err.message);
-  });
-
-  console.log('[CalendarWorker] Worker started on queue: farming-calendar');
-  return worker;
+    }, { connection });
+    worker.on('failed', (job, err) => console.error(`[CalendarWorker] Job ${job?.id} failed:`, err.message));
+    console.log('[CalendarWorker] Worker started');
+    return worker;
+  } catch {
+    console.warn('[CalendarWorker] Redis unavailable — worker disabled');
+    return null;
+  }
 }

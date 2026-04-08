@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Booking {
-  _id: string;
+  id: string;
   service_id?: { type: string; price: number; description: string; averageRating: number };
   provider_id?: { name: string; phone: string };
   status: string;
@@ -11,7 +11,7 @@ interface Booking {
 }
 
 interface Alert {
-  _id: string;
+  id: string;
   type: string;
   message: string;
   targetLocation: string;
@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     axios.get('/api/bookings', { headers })
-      .then(r => setBookings(Array.isArray(r.data) ? r.data : []))
+      .then(r => setBookings(Array.isArray(r.data?.bookings) ? r.data.bookings : []))
       .catch(() => {});
     axios.get('/api/alerts', { headers })
       .then(r => setAlerts(r.data?.alerts ?? []))
@@ -55,7 +55,7 @@ export default function DashboardPage() {
     if (!window.confirm('Cancel this booking?')) return;
     try {
       await axios.patch(`/api/bookings/${id}`, { status: 'Cancelled', cancellationReason: 'Cancelled by farmer' }, { headers });
-      setBookings(b => b.map(x => x._id === id ? { ...x, status: 'Cancelled' } : x));
+      setBookings(b => b.map(x => x.id === id ? { ...x, status: 'Cancelled' } : x));
     } catch (e: any) { alert(e.response?.data?.error || 'Failed to cancel'); }
   }
 
@@ -94,10 +94,10 @@ export default function DashboardPage() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {b.status === 'Pending' && (
-              <button style={styles.redBtn} onClick={() => cancelBooking(b._id)}>✗ Cancel</button>
+              <button style={styles.redBtn} onClick={() => cancelBooking(b.id)}>✗ Cancel</button>
             )}
             {b.status === 'Completed' && (
-              <button style={styles.greenBtn} onClick={() => setFeedbackForm({ bookingId: b._id, rating: 5, comment: '' })}>
+              <button style={styles.greenBtn} onClick={() => setFeedbackForm({ bookingId: b.id, rating: 5, comment: '' })}>
                 ⭐ Rate
               </button>
             )}
@@ -166,7 +166,7 @@ export default function DashboardPage() {
               <h3 style={styles.sectionTitle}>🔔 Recent Alerts</h3>
               {alerts.length === 0 && <p style={{ color: '#888', fontSize: 14 }}>No active alerts for your area.</p>}
               {alerts.slice(0, 4).map(a => (
-                <div key={a._id} style={{ ...styles.alertCard, borderLeft: `4px solid ${a.type === 'emergency' ? '#e63946' : a.type === 'weather' ? '#4cc9f0' : '#f4a261'}` }}>
+                <div key={a.id} style={{ ...styles.alertCard, borderLeft: `4px solid ${a.type === 'emergency' ? '#e63946' : a.type === 'weather' ? '#4cc9f0' : '#f4a261'}` }}>
                   <div style={styles.alertType}>{ALERT_ICONS[a.type] ?? '📢'} {a.type}</div>
                   <div style={styles.alertMsg}>{a.message}</div>
                 </div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
           {bookings.filter(b => b.status === 'Pending').length > 0 && (
             <div style={styles.section}>
               <h3 style={styles.sectionTitle}>⏳ Awaiting Confirmation</h3>
-              {bookings.filter(b => b.status === 'Pending').slice(0, 3).map(b => <BookingCard key={b._id} b={b} />)}
+              {bookings.filter(b => b.status === 'Pending').slice(0, 3).map(b => <BookingCard key={b.id} b={b} />)}
             </div>
           )}
         </div>
@@ -191,7 +191,7 @@ export default function DashboardPage() {
               <a href="/services" style={styles.greenBtn}>Browse Services →</a>
             </div>
           )}
-          {bookings.map(b => <BookingCard key={b._id} b={b} />)}
+          {bookings.map(b => <BookingCard key={b.id} b={b} />)}
         </div>
       )}
 
@@ -199,7 +199,7 @@ export default function DashboardPage() {
         <div style={{ marginTop: 8 }}>
           {alerts.length === 0 && <p style={{ color: '#888' }}>No active alerts for your area.</p>}
           {alerts.map(a => (
-            <div key={a._id} style={{ ...styles.alertCard, borderLeft: `4px solid ${a.type === 'emergency' ? '#e63946' : a.type === 'weather' ? '#4cc9f0' : '#f4a261'}`, marginBottom: 10 }}>
+            <div key={a.id} style={{ ...styles.alertCard, borderLeft: `4px solid ${a.type === 'emergency' ? '#e63946' : a.type === 'weather' ? '#4cc9f0' : '#f4a261'}`, marginBottom: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                 <span style={{ ...styles.pill, background: a.type === 'emergency' ? '#e63946' : a.type === 'weather' ? '#4cc9f0' : '#f4a261', fontSize: 11 }}>
                   {ALERT_ICONS[a.type]} {a.type}

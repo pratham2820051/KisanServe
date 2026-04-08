@@ -3,6 +3,7 @@ import axios from 'axios';
 import SplashAnimation from '../components/SplashAnimation';
 
 type Role = 'Farmer' | 'Service_Provider' | 'Admin';
+type Mode = 'login' | 'register';
 
 const ROLES: { value: Role; icon: string; label: string; desc: string; color: string }[] = [
   { value: 'Farmer',           icon: '🧑‍🌾', label: 'Farmer',           desc: 'Book farming services',   color: '#2d6a4f' },
@@ -10,45 +11,31 @@ const ROLES: { value: Role; icon: string; label: string; desc: string; color: st
   { value: 'Admin',            icon: '⚙️',  label: 'Admin',            desc: 'Platform management',     color: '#457b9d' },
 ];
 
-interface RoleLoginState {
-  phone: string;
-  otp: string;
-  step: 'phone' | 'otp';
-  loading: boolean;
-  error: string;
-  devOtp: string;
-}
-
-const initState = (): RoleLoginState => ({ phone: '', otp: '', step: 'phone', loading: false, error: '', devOtp: '' });
-
 export default function LoginPage() {
   const [splashDone, setSplashDone] = useState(false);
-  const [states, setStates] = useState<Record<Role, RoleLoginState>>({
-    Farmer: initState(),
-    Service_Provider: initState(),
-    Admin: initState(),
-  });
+  const [mode, setMode] = useState<Mode>('login');
+  const [selectedRole, setSelectedRole] = useState<Role>('Farmer');
+  const [form, setForm] = useState({ name: '', phone: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  function update(role: Role, patch: Partial<RoleLoginState>) {
-    setStates(s => ({ ...s, [role]: { ...s[role], ...patch } }));
+  const role = ROLES.find(r => r.value === selectedRole)!;
+
+  function update(patch: Partial<typeof form>) {
+    setForm(f => ({ ...f, ...patch }));
+    setError('');
   }
 
-  async function sendOtp(role: Role) {
-    const { phone } = states[role];
-    update(role, { loading: true, error: '' });
+  async function submit() {
+    setLoading(true); setError('');
     try {
-      const res = await axios.post('/api/auth/login', { phone, role });
-      update(role, { step: 'otp', loading: false, devOtp: res.data.devOtp ?? '' });
-    } catch (e: any) {
-      update(role, { loading: false, error: e.response?.data?.error || 'Failed to send OTP' });
-    }
-  }
+      const endpoint = mode === 'register' ? '/api/auth/register' : '/api/auth/login';
+      const payload = mode === 'register'
+        ? { name: form.name, phone: form.phone, password: form.password, role: selectedRole }
+        : { phone: form.phone, password: form.password, role: selectedRole };
 
-  async function verifyOtp(role: Role) {
-    const { phone, otp } = states[role];
-    update(role, { loading: true, error: '' });
-    try {
-      const res = await axios.post('/api/auth/verify-otp', { phone, otp });
+      const res = await axios.post(endpoint, payload);
       localStorage.clear();
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user', JSON.stringify(res.data.user));
@@ -57,7 +44,9 @@ export default function LoginPage() {
       else if (r === 'Admin') window.location.replace('/admin');
       else window.location.replace('/dashboard');
     } catch (e: any) {
-      update(role, { loading: false, error: e.response?.data?.error || 'Invalid OTP' });
+      setError(e.response?.data?.error || 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -65,70 +54,85 @@ export default function LoginPage() {
 
   return (
     <div style={s.page}>
-      {/* Animated background */}
       <div style={s.bgOverlay} />
       {['🌾','🌿','🍃','🌾','🌻','🌾','🍀','🌿'].map((p, i) => (
         <span key={i} style={{ ...s.particle, left: `${8+i*12}%`, animationDelay: `${i*0.5}s`, animationDuration: `${4+i*0.4}s` }}>{p}</span>
       ))}
 
       <div style={s.content}>
-        {/* Header */}
         <div style={s.header}>
           <span style={s.logo}>🌾</span>
           <h1 style={s.title}>KisanServe</h1>
           <p style={s.subtitle}>Smart Farming Platform</p>
         </div>
 
-        <p style={s.prompt}>Choose your role to get started</p>
+        {/* Mode toggle */}
+        <div style={s.modeToggle}>
+          <button style={{ ...s.modeBtn, ...(mode === 'login' ? s.modeBtnActive : {}) }} onClick={() => { setMode('login'); setError(''); }}>Login</button>
+          <button style={{ ...s.modeBtn, ...(mode === 'register' ? s.modeBtnActive : {}) }} onClick={() => { setMode('register'); setError(''); }}>Register</button>
+        </div>
 
-        {/* Three role cards side by side on desktop, stacked on mobile */}
-        <div style={s.grid}>
-          {ROLES.map(role => {
-            const st = states[role.value];
-            return (
-              <div key={role.value} style={{ ...s.card, borderTop: `4px solid ${role.color}` }}>
-                <div style={s.roleHeader}>
-                  <span style={s.roleIcon}>{role.icon}</span>
-                  <div>
-                    <div style={{ ...s.roleLabel, color: role.color }}>{role.label}</div>
-                    <div style={s.roleDesc}>{role.desc}</div>
-                  </div>
-                </div>
+        <div style={s.card}>
+          {/* Role selector */}
+          <div style={s.roleRow}>
+            {ROLES.map(r => (
+              <button key={r.value}
+                style={{
+                  ...s.roleBtn,
+                  ...(selectedRole === r.value ? {
+                    background: r.color,
+                    borderColor: r.color,
+                    color: '#fff',
+                    transform: 'scale(1.04)',
+                  } : {})
+                }}
+                onClick={() => setSelectedRole(r.value)}>
+                <span style={{ fontSize: 22 }}>{r.icon}</span>
+                <span style={{ fontSize: 12, fontWeight: 700 }}>{r.label}</span>
+                <span style={{ fontSize: 10, opacity: 0.8 }}>{r.desc}</span>
+              </button>
+            ))}
+          </div>
 
-                {st.step === 'phone' ? (
-                  <>
-                    <input style={s.input} type="tel"
-                      placeholder="+91 99999 99999"
-                      value={st.phone}
-                      onChange={e => update(role.value, { phone: e.target.value })}
-                      onKeyDown={e => e.key === 'Enter' && st.phone && sendOtp(role.value)} />
-                    <button style={{ ...s.btn, background: role.color, opacity: st.loading || !st.phone ? 0.6 : 1 }}
-                      onClick={() => sendOtp(role.value)} disabled={st.loading || !st.phone}>
-                      {st.loading ? '⏳ Sending...' : 'Get OTP →'}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p style={s.sentTo}>OTP sent to {st.phone}</p>
-                    {st.devOtp && <div style={s.devOtp}>Dev OTP: <strong>{st.devOtp}</strong></div>}
-                    <input style={{ ...s.input, letterSpacing: 6, textAlign: 'center', fontSize: 20 }}
-                      type="number" placeholder="• • • • • •"
-                      value={st.otp}
-                      onChange={e => update(role.value, { otp: e.target.value })}
-                      maxLength={6} />
-                    <button style={{ ...s.btn, background: role.color, opacity: st.loading || st.otp.length < 4 ? 0.6 : 1 }}
-                      onClick={() => verifyOtp(role.value)} disabled={st.loading || st.otp.length < 4}>
-                      {st.loading ? '⏳ Verifying...' : '✓ Login'}
-                    </button>
-                    <button style={s.backBtn} onClick={() => update(role.value, { step: 'phone', otp: '', error: '' })}>
-                      ← Change number
-                    </button>
-                  </>
-                )}
-                {st.error && <p style={s.error}>{st.error}</p>}
-              </div>
-            );
-          })}
+          <div style={s.divider} />
+
+          {mode === 'register' && (
+            <input style={s.input} type="text" placeholder="Full Name"
+              value={form.name} onChange={e => update({ name: e.target.value })} />
+          )}
+
+          <input style={s.input} type="tel" placeholder="Phone number (e.g. 7892489279)"
+            value={form.phone} onChange={e => update({ phone: e.target.value })} />
+
+          <div style={{ position: 'relative' }}>
+            <input style={{ ...s.input, paddingRight: 44 }}
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password (min 6 characters)"
+              value={form.password}
+              onChange={e => update({ password: e.target.value })}
+              onKeyDown={e => e.key === 'Enter' && submit()} />
+            <button
+              type="button"
+              style={s.eyeBtn}
+              onClick={() => setShowPassword(v => !v)}>
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
+
+          {error && <p style={s.error}>{error}</p>}
+
+          <button style={{ ...s.btn, background: role.color, opacity: loading ? 0.6 : 1 }}
+            onClick={submit} disabled={loading}>
+            {loading ? '⏳ Please wait...' : mode === 'register' ? `Register as ${role.label}` : `Login as ${role.label}`}
+          </button>
+
+          <p style={s.switchText}>
+            {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+            <span style={{ color: role.color, cursor: 'pointer', fontWeight: 700 }}
+              onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}>
+              {mode === 'login' ? 'Register' : 'Login'}
+            </span>
+          </p>
         </div>
       </div>
 
@@ -138,15 +142,10 @@ export default function LoginPage() {
           20%  { opacity:0.2; }
           100% { transform: translateY(-120px) rotate(360deg); opacity:0; }
         }
-        @keyframes titleGlow {
-          0%,100% { text-shadow: 0 0 20px rgba(82,183,136,0.6), 0 0 40px rgba(45,106,79,0.4); }
-          50%     { text-shadow: 0 0 40px rgba(149,213,178,0.9), 0 0 80px rgba(82,183,136,0.6); }
-        }
         @keyframes logoFloat {
           0%,100% { transform: translateY(0) rotate(-5deg); }
           50%     { transform: translateY(-10px) rotate(5deg); }
         }
-        @input::placeholder { color: rgba(255,255,255,0.5); }
       `}</style>
     </div>
   );
@@ -156,7 +155,7 @@ const s: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
     background: 'linear-gradient(135deg, #0a2e1a 0%, #1b4332 50%, #0d3320 100%)',
-    fontFamily: 'sans-serif', overflow: 'hidden', position: 'relative',
+    fontFamily: 'Inter, sans-serif', overflow: 'hidden', position: 'relative',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   },
   bgOverlay: {
@@ -166,60 +165,63 @@ const s: Record<string, React.CSSProperties> = {
   },
   particle: {
     position: 'absolute', bottom: '5%', fontSize: 20, opacity: 0,
-    animation: 'particleRise ease-in-out infinite',
-    pointerEvents: 'none',
+    animation: 'particleRise ease-in-out infinite', pointerEvents: 'none',
   },
   content: {
-    position: 'relative', zIndex: 1, width: '100%', maxWidth: 960,
+    position: 'relative', zIndex: 1, width: '100%', maxWidth: 440,
     padding: '32px 20px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center',
   },
-  header: { textAlign: 'center', marginBottom: 8 },
+  header: { textAlign: 'center', marginBottom: 20 },
   logo: {
     fontSize: 64, display: 'block', marginBottom: 8,
     animation: 'logoFloat 3s ease-in-out infinite',
     filter: 'drop-shadow(0 0 16px rgba(82,183,136,0.8))',
   },
-  title: {
-    fontSize: 40, fontWeight: 900, color: '#fff', margin: '0 0 4px',
-    animation: 'titleGlow 2.5s ease-in-out infinite',
+  title: { fontSize: 36, fontWeight: 900, color: '#fff', margin: '0 0 4px' },
+  subtitle: { color: 'rgba(255,255,255,0.6)', fontSize: 13, letterSpacing: 2, margin: 0 },
+  modeToggle: {
+    display: 'flex', background: 'rgba(255,255,255,0.08)', borderRadius: 12,
+    padding: 4, marginBottom: 20, width: '100%',
   },
-  subtitle: { color: 'rgba(255,255,255,0.6)', fontSize: 14, letterSpacing: 2, margin: 0 },
-  prompt: { color: 'rgba(255,255,255,0.75)', fontSize: 16, margin: '20px 0 16px', fontWeight: 500 },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-    gap: 16, width: '100%',
+  modeBtn: {
+    flex: 1, padding: '10px', background: 'none', border: 'none',
+    color: 'rgba(255,255,255,0.6)', borderRadius: 10, cursor: 'pointer',
+    fontSize: 14, fontWeight: 600, transition: 'all 0.2s',
   },
+  modeBtnActive: { background: 'rgba(255,255,255,0.15)', color: '#fff' },
   card: {
     background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)',
-    borderRadius: 16, padding: '20px 20px 16px',
+    borderRadius: 20, padding: '24px 24px 20px',
     border: '1px solid rgba(255,255,255,0.12)',
     boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-    display: 'flex', flexDirection: 'column', gap: 10,
+    width: '100%', display: 'flex', flexDirection: 'column', gap: 12,
   },
-  roleHeader: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 },
-  roleIcon: { fontSize: 36 },
-  roleLabel: { fontWeight: 700, fontSize: 16 },
-  roleDesc: { color: 'rgba(255,255,255,0.55)', fontSize: 12 },
+  roleRow: { display: 'flex', gap: 8 },
+  roleBtn: {
+    flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+    padding: '12px 6px', background: 'rgba(255,255,255,0.05)',
+    border: '2px solid rgba(255,255,255,0.15)', borderRadius: 12,
+    color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+    transition: 'all 0.2s', boxShadow: 'none',
+  },
+  divider: { height: 1, background: 'rgba(255,255,255,0.1)' },
   input: {
     width: '100%', padding: '12px 14px', borderRadius: 10,
     border: '1px solid rgba(255,255,255,0.2)',
     background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 15,
     boxSizing: 'border-box', outline: 'none',
   },
+  eyeBtn: {
+    position: 'absolute', right: 12, top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none', border: 'none', cursor: 'pointer',
+    fontSize: 18, padding: 0, lineHeight: 1,
+  },
   btn: {
-    width: '100%', padding: '12px', color: '#fff', border: 'none',
-    borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: 'pointer',
+    width: '100%', padding: '13px', color: '#fff', border: 'none',
+    borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer',
     boxShadow: '0 4px 12px rgba(0,0,0,0.3)', transition: 'opacity 0.2s',
   },
-  backBtn: {
-    background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
-    cursor: 'pointer', fontSize: 12, padding: 0,
-  },
-  sentTo: { color: 'rgba(255,255,255,0.7)', fontSize: 13, margin: 0 },
-  devOtp: {
-    background: 'rgba(82,183,136,0.15)', borderRadius: 8, padding: '6px 10px',
-    color: '#95d5b2', fontSize: 12, textAlign: 'center',
-  },
-  error: { color: '#ff6b6b', fontSize: 12, margin: 0, textAlign: 'center' },
+  switchText: { color: 'rgba(255,255,255,0.5)', fontSize: 13, textAlign: 'center', margin: 0 },
+  error: { color: '#ff6b6b', fontSize: 13, margin: 0, textAlign: 'center' },
 };

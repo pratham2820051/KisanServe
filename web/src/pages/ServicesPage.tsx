@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Service {
-  _id: string;
+  id: string;
   type: string;
   category: string;
   description: string;
@@ -92,7 +92,6 @@ export default function ServicesPage() {
     const slot = timeSlot[serviceId] || '10:00-12:00';
 
     if (!isOnline()) {
-      // Queue for later sync
       enqueueBooking({ service_id: serviceId, date, timeSlot: slot });
       setBooked(b => ({ ...b, [serviceId]: true }));
       setOfflineMsg('📵 Booking queued — will sync when online');
@@ -156,7 +155,7 @@ export default function ServicesPage() {
 
       <div style={styles.grid}>
         {filtered.map(s => (
-          <div key={s._id} style={styles.card}>
+          <div key={s.id} style={styles.card}>
             <div style={styles.cardHeader}>
               <span style={styles.icon}>{CATEGORY_ICONS[s.type] ?? CATEGORY_ICONS[s.category] ?? '📦'}</span>
               <span style={styles.categoryBadge}>{CATEGORY_LABELS[s.type] ?? s.type}</span>
@@ -167,41 +166,42 @@ export default function ServicesPage() {
 
             {s.providerName && <p style={styles.meta}>🏢 {s.providerName}</p>}
 
-            {s.averageRating !== undefined && (
+            {s.average_rating !== undefined && (
               <p style={styles.meta}>
-                ⭐ {Number(s.averageRating).toFixed(1)} ({s.ratingCount ?? 0} reviews)
-                {s.priceTrend && (
-                  <span style={{ marginLeft: 8, color: s.priceTrend === 'rising' ? '#e63946' : s.priceTrend === 'falling' ? '#2d6a4f' : '#888' }}>
-                    {s.priceTrend === 'rising' ? '📈' : s.priceTrend === 'falling' ? '📉' : '➡️'} {s.priceTrend}
+                ⭐ {Number(s.average_rating).toFixed(1)} ({s.rating_count ?? 0} reviews)
+                {s.price_trend && (
+                  <span style={{ marginLeft: 8, color: s.price_trend === 'rising' ? '#e63946' : s.price_trend === 'falling' ? '#2d6a4f' : '#888' }}>
+                    {s.price_trend === 'rising' ? '📈' : s.price_trend === 'falling' ? '📉' : '➡️'} {s.price_trend}
                   </span>
                 )}
               </p>
             )}
 
-            {s.optimalBookingWindow && (
-              <p style={styles.meta}>🗓️ Best time: {s.optimalBookingWindow}</p>
+            {s.optimal_booking_window && (
+              <p style={styles.meta}>🗓️ Best time: {s.optimal_booking_window}</p>
             )}
 
             <p style={styles.price}>₹{s.price}</p>
 
-            {!booked[s._id] && (
+            {!booked[s.id] && (
               <>
                 <input type="date" style={styles.input}
                   min={new Date().toISOString().split('T')[0]}
-                  onChange={e => setBookingDate(d => ({ ...d, [s._id]: new Date(e.target.value).toISOString() }))} />
+                  defaultValue={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                  onChange={e => setBookingDate(d => ({ ...d, [s.id]: new Date(e.target.value).toISOString() }))} />
                 <select style={styles.input}
-                  value={timeSlot[s._id] || '10:00-12:00'}
-                  onChange={e => setTimeSlot(t => ({ ...t, [s._id]: e.target.value }))}>
+                  value={timeSlot[s.id] || '10:00-12:00'}
+                  onChange={e => setTimeSlot(t => ({ ...t, [s.id]: e.target.value }))}>
                   {TIME_SLOTS.map(t => <option key={t}>{t}</option>)}
                 </select>
               </>
             )}
 
             <button
-              style={booked[s._id] ? styles.bookedBtn : styles.bookBtn}
-              onClick={() => book(s._id)}
-              disabled={booked[s._id]}>
-              {booked[s._id] ? '✓ Booked Successfully' : 'Book Now'}
+              style={booked[s.id] ? styles.bookedBtn : styles.bookBtn}
+              onClick={() => book(s.id)}
+              disabled={booked[s.id]}>
+              {booked[s.id] ? '✓ Booked Successfully' : 'Book Now'}
             </button>
           </div>
         ))}

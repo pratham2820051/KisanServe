@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Booking {
-  _id: string;
+  id: string;
   farmer_id?: { name: string; phone: string };
   service_id?: { type: string; price: number };
   status: string;
@@ -27,10 +27,22 @@ const TYPE_LABELS: Record<string, string> = {
 
 const SERVICE_TYPES = ['Transport', 'Irrigation', 'FertilizerSupply', 'Labor', 'SoilTesting', 'EquipmentRental'];
 
+interface Service {
+  id: string;
+  type: string;
+  description: string;
+  price: number;
+  status: string;
+  availability: boolean;
+  average_rating: number;
+  rating_count: number;
+}
+
 export default function ProviderDashboardPage() {
   const [grouped, setGrouped] = useState<Record<string, Booking[]>>({});
   const [earnings, setEarnings] = useState<Earnings | null>(null);
-  const [tab, setTab] = useState<'overview' | 'pending' | 'active' | 'history' | 'add'>('overview');
+  const [services, setServices] = useState<Service[]>([]);
+  const [tab, setTab] = useState<'overview' | 'services' | 'pending' | 'active' | 'history' | 'add'>('overview');
   const [form, setForm] = useState({ description: '', type: 'Transport', price: '' });
   const [msg, setMsg] = useState('');
   const token = localStorage.getItem('token');
@@ -39,10 +51,13 @@ export default function ProviderDashboardPage() {
 
   useEffect(() => {
     axios.get('/api/provider/bookings', { headers })
-      .then(r => setGrouped(r.data ?? {}))
+      .then(r => setGrouped(r.data?.bookings ?? {}))
       .catch(() => {});
     axios.get('/api/provider/earnings', { headers })
       .then(r => setEarnings(r.data))
+      .catch(() => {});
+    axios.get('/api/provider/services', { headers })
+      .then(r => setServices(r.data?.services ?? []))
       .catch(() => {});
   }, []);
 
@@ -56,7 +71,7 @@ export default function ProviderDashboardPage() {
       await axios.patch(`/api/bookings/${id}`, { status }, { headers });
       // Refresh bookings
       const r = await axios.get('/api/provider/bookings', { headers });
-      setGrouped(r.data ?? {});
+      setGrouped(r.data?.bookings ?? {});
       const e = await axios.get('/api/provider/earnings', { headers });
       setEarnings(e.data);
     } catch { alert('Failed to update booking'); }
@@ -94,14 +109,14 @@ export default function ProviderDashboardPage() {
           {showActions && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {b.status === 'Pending' && <>
-                <button style={styles.greenBtn} onClick={() => updateBooking(b._id, 'Accepted')}>✓ Accept</button>
-                <button style={styles.redBtn} onClick={() => updateBooking(b._id, 'Cancelled')}>✗ Decline</button>
+                <button style={styles.greenBtn} onClick={() => updateBooking(b.id, 'Accepted')}>✓ Accept</button>
+                <button style={styles.redBtn} onClick={() => updateBooking(b.id, 'Cancelled')}>✗ Decline</button>
               </>}
               {b.status === 'Accepted' && (
-                <button style={styles.greenBtn} onClick={() => updateBooking(b._id, 'InProgress')}>▶ Start Work</button>
+                <button style={styles.greenBtn} onClick={() => updateBooking(b.id, 'InProgress')}>▶ Start Work</button>
               )}
               {b.status === 'InProgress' && (
-                <button style={styles.greenBtn} onClick={() => updateBooking(b._id, 'Completed')}>✓ Mark Done</button>
+                <button style={styles.greenBtn} onClick={() => updateBooking(b.id, 'Completed')}>✓ Mark Done</button>
               )}
             </div>
           )}
@@ -117,6 +132,7 @@ export default function ProviderDashboardPage() {
       <div style={styles.tabs}>
         {[
           { key: 'overview', label: '📊 Overview' },
+          { key: 'services', label: `🛠️ My Services (${services.length})` },
           { key: 'pending', label: `⏳ Pending (${pending.length})` },
           { key: 'active', label: `▶ Active (${active.length})` },
           { key: 'history', label: `📋 History (${history.length})` },
@@ -151,7 +167,7 @@ export default function ProviderDashboardPage() {
           {pending.length > 0 && (
             <div style={styles.section}>
               <h3 style={styles.sectionTitle}>⏳ Needs Your Response</h3>
-              {pending.slice(0, 3).map(b => <BookingCard key={b._id} b={b} showActions />)}
+              {pending.slice(0, 3).map(b => <BookingCard key={b.id} b={b} showActions />)}
               {pending.length > 3 && <p style={{ color: '#888', fontSize: 13 }}>+{pending.length - 3} more pending bookings</p>}
             </div>
           )}
@@ -169,24 +185,67 @@ export default function ProviderDashboardPage() {
         </div>
       )}
 
+      {tab === 'services' && (
+        <div style={{ marginTop: 8 }}>
+          {services.length === 0 && (
+            <div style={styles.emptyState}>
+              <p style={{ fontSize: 16, color: '#666' }}>You haven't added any services yet.</p>
+              <button style={styles.greenBtn} onClick={() => setTab('add')}>➕ Add Your First Service</button>
+            </div>
+          )}
+          {services.map(s => (
+            <div key={s.id} style={styles.serviceCard}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                    <span style={{ ...styles.pill, background: s.status === 'active' ? '#52b788' : s.status === 'rejected' ? '#e63946' : '#f4a261' }}>
+                      {s.status === 'active' ? '✅ Active' : s.status === 'rejected' ? '❌ Rejected' : '⏳ Pending Approval'}
+                    </span>
+                    <strong style={{ fontSize: 15 }}>{TYPE_LABELS[s.type] ?? s.type}</strong>
+                  </div>
+                  <p style={{ margin: '0 0 6px', fontSize: 13, color: '#555' }}>{s.description}</p>
+                  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#2d6a4f' }}>₹{s.price}</span>
+                    <span style={{ fontSize: 13, color: '#888' }}>⭐ {Number(s.average_rating).toFixed(1)} ({s.rating_count} reviews)</span>
+                    <span style={{ fontSize: 13, color: s.availability ? '#52b788' : '#e63946' }}>
+                      {s.availability ? '🟢 Available' : '🔴 Unavailable'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {s.status === 'pending' && (
+                <p style={{ margin: '8px 0 0', fontSize: 12, color: '#f4a261', background: '#fff8f0', padding: '6px 10px', borderRadius: 6 }}>
+                  ⏳ Waiting for admin approval before farmers can see this service.
+                </p>
+              )}
+              {s.status === 'rejected' && (
+                <p style={{ margin: '8px 0 0', fontSize: 12, color: '#e63946', background: '#fff5f5', padding: '6px 10px', borderRadius: 6 }}>
+                  ❌ This service was rejected by admin. Please review and resubmit.
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {tab === 'pending' && (
         <div style={{ marginTop: 8 }}>
           {pending.length === 0 ? <p style={{ color: '#888' }}>No pending bookings. All caught up!</p>
-            : pending.map(b => <BookingCard key={b._id} b={b} showActions />)}
+            : pending.map(b => <BookingCard key={b.id} b={b} showActions />)}
         </div>
       )}
 
       {tab === 'active' && (
         <div style={{ marginTop: 8 }}>
           {active.length === 0 ? <p style={{ color: '#888' }}>No active bookings right now.</p>
-            : active.map(b => <BookingCard key={b._id} b={b} showActions />)}
+            : active.map(b => <BookingCard key={b.id} b={b} showActions />)}
         </div>
       )}
 
       {tab === 'history' && (
         <div style={{ marginTop: 8 }}>
           {history.length === 0 ? <p style={{ color: '#888' }}>No completed or cancelled bookings yet.</p>
-            : history.map(b => <BookingCard key={b._id} b={b} />)}
+            : history.map(b => <BookingCard key={b.id} b={b} />)}
         </div>
       )}
 
@@ -230,6 +289,7 @@ const styles: Record<string, React.CSSProperties> = {
   section: { background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', marginBottom: 16 },
   sectionTitle: { margin: '0 0 14px', color: '#2d6a4f' },
   bookingCard: { background: '#fff', borderRadius: 10, padding: 16, marginBottom: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
+  serviceCard: { background: '#fff', borderRadius: 12, padding: 18, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #f0f0f0' },
   bcRow: { display: 'flex', alignItems: 'flex-start', gap: 12 },
   pill: { color: '#fff', padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 600 },
   sub: { margin: '2px 0', fontSize: 13, color: '#888' },

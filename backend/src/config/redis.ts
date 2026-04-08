@@ -3,13 +3,18 @@ import Redis from 'ioredis';
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
 export const redis = new Redis(REDIS_URL, {
-  maxRetriesPerRequest: 3,
+  maxRetriesPerRequest: 1,
   lazyConnect: true,
+  enableOfflineQueue: false,
 });
 
 redis.on('connect', () => console.log('Redis connected'));
-redis.on('error', (err) => console.error('Redis error:', err));
+redis.on('error', () => {}); // suppress error logs when Redis unavailable
 
 export async function connectRedis(): Promise<void> {
-  await redis.connect();
+  try {
+    await redis.connect();
+  } catch {
+    console.warn('Redis unavailable — caching disabled');
+  }
 }

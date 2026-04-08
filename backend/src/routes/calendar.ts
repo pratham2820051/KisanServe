@@ -1,74 +1,33 @@
-/**
- * Calendar routes
- * POST /calendar/generate — Farmer only: enqueue a calendar generation job
- * GET  /calendar          — Farmer only: return current farming calendar
- *
- * Requirements: 16.1, 16.2, 16.3
- */
-
 import { Router, Request, Response } from 'express';
 import { authenticate } from '../middleware/auth';
 import { farmerOnly } from '../middleware/rbac';
-import { calendarQueue } from '../config/queue';
-import { FarmingCalendar } from '../models/FarmingCalendar';
+import { supabase } from '../config/supabase';
 
 const router = Router();
 
-/**
- * POST /calendar/generate
- * Farmer only — enqueue a 'generate' job for the authenticated farmer.
- * Body: { cropType: string, location: string }
- */
-router.post(
-  '/generate',
-  authenticate,
-  farmerOnly,
-  async (req: Request, res: Response): Promise<void> => {
-    const { cropType, location } = req.body;
+router.post('/generate', authenticate, farmerOnly, async (req: Request, res: Response): Promise<void> => {
+  const { cropType, location } = req.body;
+  if (!cropType || !location) { res.status(400).json({ error: 'cropType and location are required' }); return; }
 
-    if (!cropType || !location) {
-      res.status(400).json({ error: 'cropType and location are required' });
-      return;
-    }
+  const farmerId = req.user!.userId;
+  const schedule = [
+    { activity: 'Irrigation', date: new Date(Date.now() + 2 * 86400000).toISOString(), notes: `Water ${cropType} fields` },
+    { activity: 'Fertilizer', date: new Date(Date.now() + 7 * 86400000).toISOString(), notes: 'Apply NPK fertilizer' },
+    { activity: 'Harvest Check', date: new Date(Date.now() + 14 * 86400000).toISOString(), notes: 'Inspect crop readiness' },
+  ];
 
-    const farmerId = req.user!.userId;
+  const { data, error } = await supabase.from('farming_calendars').upsert({
+    farmer_id: farmerId, crop_type: cropType, location, schedule_json: schedule, updated_at: new Date(),
+  }, { onConflict: 'farmer_id' }).select().single();
 
-    await calendarQueue.add('generate-calendar', {
-      type: 'generate',
-      farmerId,
-      cropType,
-      location,
-    });
+  if (error) { res.status(500).json({ error: 'Failed to generate calendar' }); return; }
+  res.status(201).json({ calendar: data });
+});
 
-    res.status(202).json({ message: 'Calendar generation queued' });
-  }
-);
-
-/**
- * GET /calendar
- * Farmer only — returns the authenticated farmer's current farming calendar.
- */
-router.get(
-  '/',
-  authenticate,
-  farmerOnly,
-  async (req: Request, res: Response): Promise<void> => {
-    const farmerId = req.user!.userId;
-
-    try {
-      const calendar = await FarmingCalendar.findOne({ farmer_id: farmerId }).lean();
-
-      if (!calendar) {
-        res.status(404).json({ error: 'No farming calendar found. Please generate one first.' });
-        return;
-      }
-
-      res.json({ calendar });
-    } catch (err) {
-      console.error('[CalendarRoute] GET /calendar error:', err);
-      res.status(500).json({ error: 'Failed to fetch calendar' });
-    }
-  }
-);
+router.get('/', authenticate, farmerOnly, async (req: Request, res: Response): Promise<void> => {
+  const { data } = await supabase.from('farming_calendars').select('*').eq('farmer_id', req.user!.userId).single();
+  if (!data) { res.status(404).json({ error: 'No calendar found. Please generate one first.' }); return; }
+  res.json({ calendar: data });
+});
 
 export default router;

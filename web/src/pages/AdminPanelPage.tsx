@@ -10,7 +10,7 @@ interface Analytics {
 }
 
 interface FlaggedReview {
-  _id: string;
+  id: string;
   rating: number;
   comment: string;
   reviewer_id?: { name: string };
@@ -18,13 +18,20 @@ interface FlaggedReview {
 }
 
 interface Service {
-  _id: string;
+  id: string;
   type: string;
   category: string;
   description: string;
   price: number;
   status: string;
   averageRating: number;
+}
+
+interface KBEntry {
+  id?: string;
+  question?: string;
+  keywords: string[];
+  answer: string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -41,36 +48,38 @@ export default function AdminPanelPage() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [reviews, setReviews] = useState<FlaggedReview[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [fraudStats, setFraudStats] = useState<any>(null);
-  const [tab, setTab] = useState<'overview' | 'services' | 'reviews' | 'flagged' | 'fraud'>('overview');
+  const [tab, setTab] = useState<'overview' | 'services' | 'reviews' | 'flagged' | 'knowledge'>('overview');
+  const [kb, setKb] = useState<KBEntry[]>([]);
+  const [kbForm, setKbForm] = useState({ question: '', keywords: '', answer: '' });
+  const [kbMsg, setKbMsg] = useState('');
   const token = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
     axios.get('/api/admin/analytics', { headers }).then(r => setAnalytics(r.data)).catch(() => {});
     axios.get('/api/admin/flagged-reviews', { headers }).then(r => setReviews(r.data?.reviews ?? [])).catch(() => {});
-    axios.get('/api/services', { headers }).then(r => setServices(r.data?.services ?? [])).catch(() => {});
-    axios.get('/api/admin/fraud-stats', { headers }).then(r => setFraudStats(r.data)).catch(() => {});
+    axios.get('/api/admin/services', { headers }).then(r => setServices(r.data?.services ?? [])).catch(() => {});
+    axios.get('/api/chatbot/knowledge', { headers }).then(r => setKb(r.data?.entries ?? [])).catch(() => {});
   }, []);
 
   async function approveService(id: string) {
     try {
       await axios.patch(`/api/admin/services/${id}`, { status: 'active' }, { headers });
-      setServices(s => s.map(x => x._id === id ? { ...x, status: 'active' } : x));
+      setServices(s => s.map(x => x.id === id ? { ...x, status: 'active' } : x));
     } catch { alert('Failed to update service'); }
   }
 
   async function rejectService(id: string) {
     try {
       await axios.patch(`/api/admin/services/${id}`, { status: 'rejected' }, { headers });
-      setServices(s => s.map(x => x._id === id ? { ...x, status: 'rejected' } : x));
+      setServices(s => s.map(x => x.id === id ? { ...x, status: 'rejected' } : x));
     } catch { alert('Failed to update service'); }
   }
 
   async function handleReview(id: string, action: 'approve' | 'remove') {
     try {
       await axios.patch(`/api/admin/reviews/${id}`, { action }, { headers });
-      setReviews(r => r.filter(x => x._id !== id));
+      setReviews(r => r.filter(x => x.id !== id));
     } catch { alert('Failed to update review'); }
   }
 
@@ -83,9 +92,16 @@ export default function AdminPanelPage() {
       <h2 style={{ color: '#2d6a4f' }}>⚙️ Platform Overview</h2>
 
       <div style={styles.tabs}>
-        {(['overview', 'services', 'reviews', 'flagged', 'fraud'] as const).map(t => (
-          <button key={t} style={{ ...styles.tab, ...(tab === t ? styles.activeTab : {}) }} onClick={() => setTab(t)}>
-            {t === 'overview' ? '📊 Overview' : t === 'services' ? `🛠️ Services (${pendingServices} pending)` : t === 'reviews' ? `🚩 Flagged Reviews (${reviews.length})` : t === 'flagged' ? `⚠️ Flagged Users (${analytics?.flaggedAccounts?.length ?? 0})` : `🔍 Fraud Detection (${fraudStats?.totalFlagged ?? 0})`}
+        {[
+          { key: 'overview', label: '📊 Overview' },
+          { key: 'services', label: `🛠️ Services (${services.filter(s=>s.status==='pending').length} pending)` },
+          { key: 'reviews', label: `🚩 Flagged Reviews (${reviews.length})` },
+          { key: 'flagged', label: `⚠️ Flagged Users` },
+          { key: 'knowledge', label: `🧠 Chatbot KB (${kb.length})` },
+        ].map(t => (
+          <button key={t.key} style={{ ...styles.tab, ...(tab === t.key ? styles.activeTab : {}) }}
+            onClick={() => setTab(t.key as any)}>
+            {t.label}
           </button>
         ))}
       </div>
@@ -140,7 +156,7 @@ export default function AdminPanelPage() {
           {/* Platform health */}
           <div style={styles.section}>
             <h3 style={styles.sectionTitle}>🖥️ Platform Health</h3>
-            {['MongoDB — Connected', 'Redis — Connected', 'BullMQ Workers — Running (Trust Score, Calendar, Price Prediction)', 'Auto-cancel Scheduler — Active (every 1 hour)', 'API Server — Running on port 3000'].map(s => (
+            {['Supabase PostgreSQL — Connected', 'KisanServe API — Running on port 3000', 'Web App — Running on port 5173'].map(s => (
               <p key={s} style={{ margin: '4px 0', fontSize: 14 }}>✅ {s}</p>
             ))}
           </div>
@@ -154,7 +170,7 @@ export default function AdminPanelPage() {
           </p>
           {services.length === 0 && <p style={{ color: '#888' }}>No services found.</p>}
           {services.map(s => (
-            <div key={s._id} style={styles.serviceRow}>
+            <div key={s.id} style={styles.serviceRow}>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   <span style={{ ...styles.statusPill, background: s.status === 'active' ? '#52b788' : s.status === 'rejected' ? '#e63946' : '#f4a261', fontSize: 11 }}>
@@ -162,15 +178,17 @@ export default function AdminPanelPage() {
                   </span>
                   <strong style={{ fontSize: 14 }}>{TYPE_LABELS[s.type] ?? s.type}</strong>
                 </div>
-                <p style={{ margin: 0, fontSize: 13, color: '#666' }}>{s.description?.slice(0, 80)}...</p>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#2d6a4f', fontWeight: 600 }}>₹{s.price} | ⭐ {Number(s.averageRating).toFixed(1)}</p>
+                <p style={{ margin: 0, fontSize: 13, color: '#666' }}>{s.description?.slice(0, 80)}</p>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#2d6a4f', fontWeight: 600 }}>
+                  ₹{s.price} | 👤 {(s as any).users?.name ?? 'Provider'}
+                </p>
               </div>
               <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                 {s.status !== 'active' && (
-                  <button style={styles.approveBtn} onClick={() => approveService(s._id)}>✓ Approve</button>
+                  <button style={styles.approveBtn} onClick={() => approveService(s.id)}>✓ Approve</button>
                 )}
                 {s.status !== 'rejected' && (
-                  <button style={styles.rejectBtn} onClick={() => rejectService(s._id)}>✗ Reject</button>
+                  <button style={styles.rejectBtn} onClick={() => rejectService(s.id)}>✗ Reject</button>
                 )}
               </div>
             </div>
@@ -185,7 +203,7 @@ export default function AdminPanelPage() {
           </p>
           {reviews.length === 0 && <p style={{ color: '#888' }}>No flagged reviews. Platform looks clean!</p>}
           {reviews.map(r => (
-            <div key={r._id} style={styles.reviewCard}>
+            <div key={r.id} style={styles.reviewCard}>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
                   {'⭐'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
@@ -196,8 +214,8 @@ export default function AdminPanelPage() {
                 <p style={{ margin: 0, fontSize: 14, color: '#444' }}>"{r.comment}"</p>
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button style={styles.approveBtn} onClick={() => handleReview(r._id, 'approve')}>✓ Keep</button>
-                <button style={styles.rejectBtn} onClick={() => handleReview(r._id, 'remove')}>✗ Remove</button>
+                <button style={styles.approveBtn} onClick={() => handleReview(r.id, 'approve')}>✓ Keep</button>
+                <button style={styles.rejectBtn} onClick={() => handleReview(r.id, 'remove')}>✗ Remove</button>
               </div>
             </div>
           ))}
@@ -211,7 +229,7 @@ export default function AdminPanelPage() {
           </p>
           {(analytics?.flaggedAccounts ?? []).length === 0 && <p style={{ color: '#888' }}>No flagged users. All users have good trust scores!</p>}
           {(analytics?.flaggedAccounts ?? []).map((u: any) => (
-            <div key={u._id} style={styles.serviceRow}>
+            <div key={u.id} style={styles.serviceRow}>
               <div style={{ flex: 1 }}>
                 <strong>{u.name || 'Unnamed'}</strong>
                 <p style={{ margin: '2px 0', fontSize: 13, color: '#888' }}>📱 {u.phone} | Role: {u.role}</p>
@@ -225,61 +243,60 @@ export default function AdminPanelPage() {
         </div>
       )}
 
-      {tab === 'fraud' && fraudStats && (
+      {tab === 'knowledge' && (
         <div style={{ marginTop: 16 }}>
-          <p style={{ color: '#666', fontSize: 14, marginBottom: 16 }}>
-            Real-time fraud detection using 6 heuristics: IP burst, rating outlier, review velocity, extreme patterns, self-review, unverified bookings.
-          </p>
-
-          <div style={styles.grid4}>
-            <div style={styles.statCard}>
-              <div style={styles.statIcon}>🚩</div>
-              <div style={{ ...styles.statValue, color: '#e63946' }}>{fraudStats.totalFlagged}</div>
-              <div style={styles.statLabel}>Total Flagged Reviews</div>
-            </div>
-            {Object.entries(fraudStats.flaggedByReason as Record<string, number>).map(([reason, count]) => (
-              <div key={reason} style={styles.statCard}>
-                <div style={styles.statIcon}>{count > 0 ? '⚠️' : '✅'}</div>
-                <div style={{ ...styles.statValue, color: count > 0 ? '#e63946' : '#52b788' }}>{count}</div>
-                <div style={styles.statLabel}>{reason}</div>
-              </div>
-            ))}
+          <div style={{ ...styles.section, marginBottom: 20 }}>
+            <h3 style={{ ...styles.sectionTitle, marginBottom: 16 }}>➕ Add New Q&A to Chatbot</h3>
+            <label style={styles.kbLabel}>Question (what farmers will ask)</label>
+            <input style={styles.kbInput} placeholder="e.g. What crops grow in black soil?"
+              value={kbForm.question} onChange={e => setKbForm(f => ({ ...f, question: e.target.value }))} />
+            <label style={styles.kbLabel}>Keywords (comma separated)</label>
+            <input style={styles.kbInput} placeholder="e.g. black soil, regur, cotton, soybean"
+              value={kbForm.keywords} onChange={e => setKbForm(f => ({ ...f, keywords: e.target.value }))} />
+            <label style={styles.kbLabel}>Answer</label>
+            <textarea style={{ ...styles.kbInput, height: 100, resize: 'vertical' as const }}
+              placeholder="Write the detailed answer here..."
+              value={kbForm.answer} onChange={e => setKbForm(f => ({ ...f, answer: e.target.value }))} />
+            <button style={{ ...styles.approveBtn, marginTop: 8, padding: '10px 20px', fontSize: 14 }} onClick={async () => {
+              if (!kbForm.answer.trim() || (!kbForm.keywords.trim() && !kbForm.question.trim())) {
+                setKbMsg('❌ Answer and at least one keyword or question is required'); return;
+              }
+              try {
+                const res = await axios.post('/api/chatbot/knowledge', {
+                  question: kbForm.question,
+                  keywords: kbForm.keywords.split(',').map((k: string) => k.trim()).filter(Boolean),
+                  answer: kbForm.answer,
+                }, { headers });
+                setKb(prev => [...prev, res.data.entry]);
+                setKbForm({ question: '', keywords: '', answer: '' });
+                setKbMsg(`✅ Added! Total: ${res.data.total} entries`);
+                setTimeout(() => setKbMsg(''), 3000);
+              } catch { setKbMsg('❌ Failed to add entry'); }
+            }}>
+              💾 Save to Chatbot
+            </button>
+            {kbMsg && <p style={{ marginTop: 8, fontSize: 13, color: kbMsg.startsWith('✅') ? '#2d6a4f' : '#e63946' }}>{kbMsg}</p>}
           </div>
 
           <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>🔍 Detection Rules Active</h3>
-            {[
-              { rule: 'IP Burst', desc: 'Flags >3 reviews from same IP within 10 minutes', risk: '+40 risk score' },
-              { rule: 'Rating Outlier', desc: 'Flags ratings deviating >2 stars from provider average', risk: '+30 risk score' },
-              { rule: 'Review Velocity', desc: 'Flags >5 reviews submitted by same user in 1 hour', risk: '+35 risk score' },
-              { rule: 'Extreme Pattern', desc: 'Flags reviewers who always give only 1★ or 5★', risk: '+25 risk score' },
-              { rule: 'Self-Review', desc: 'Flags when reviewer and reviewee are the same user', risk: '+100 risk score' },
-              { rule: 'Unverified Booking', desc: 'Flags reviews without a completed booking', risk: '+50 risk score' },
-            ].map(r => (
-              <div key={r.rule} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
-                <div>
-                  <strong style={{ fontSize: 14 }}>✅ {r.rule}</strong>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: '#888' }}>{r.desc}</p>
+            <h3 style={styles.sectionTitle}>📚 Knowledge Base ({kb.length} entries)</h3>
+            {kb.length === 0 && <p style={{ color: '#888' }}>No entries yet. Add your first Q&A above.</p>}
+            {kb.map((entry, i) => (
+              <div key={i} style={{ background: '#f8f9fa', borderRadius: 8, padding: '12px 14px', marginBottom: 8, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
+                  {entry.question && <p style={{ margin: '0 0 4px', fontWeight: 600, fontSize: 13, color: '#2d6a4f' }}>❓ {entry.question}</p>}
+                  <p style={{ margin: '0 0 4px', fontSize: 12, color: '#888' }}>🔑 {entry.keywords.slice(0, 6).join(', ')}</p>
+                  <p style={{ margin: 0, fontSize: 13, color: '#444', lineHeight: 1.5 }}>
+                    {entry.answer.slice(0, 150)}{entry.answer.length > 150 ? '...' : ''}
+                  </p>
                 </div>
-                <span style={{ ...styles.statusPill, background: '#f4a261', fontSize: 11, alignSelf: 'center' }}>{r.risk}</span>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>🚩 Recent Flagged Reviews</h3>
-            {(fraudStats.recentFlags ?? []).length === 0 && <p style={{ color: '#888' }}>No flagged reviews yet.</p>}
-            {(fraudStats.recentFlags ?? []).slice(0, 10).map((r: any) => (
-              <div key={r._id} style={{ background: '#fff5f5', borderRadius: 8, padding: '12px 16px', marginBottom: 8, borderLeft: '4px solid #e63946' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <strong style={{ fontSize: 13 }}>{'⭐'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)} {r.rating}★</strong>
-                  <span style={{ fontSize: 11, color: '#888' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
-                </div>
-                <p style={{ margin: '2px 0', fontSize: 13, color: '#444' }}>"{r.comment || 'No comment'}"</p>
-                <p style={{ margin: '4px 0 0', fontSize: 11, color: '#e63946' }}>🚩 {r.flagReason}</p>
-                <p style={{ margin: '2px 0 0', fontSize: 11, color: '#888' }}>
-                  By: {r.reviewer_id?.name || 'Unknown'} → {r.reviewee_id?.name || 'Unknown'}
-                </p>
+                <button style={{ ...styles.rejectBtn, padding: '4px 10px' }} onClick={async () => {
+                  if (!window.confirm('Delete this entry?')) return;
+                  try {
+                    await axios.delete(`/api/chatbot/knowledge/${i}`, { headers });
+                    setKb(prev => prev.filter((_, idx) => idx !== i));
+                  } catch { alert('Failed to delete'); }
+                }}>✕</button>
               </div>
             ))}
           </div>
@@ -309,4 +326,6 @@ const styles: Record<string, React.CSSProperties> = {
   reviewCard: { background: '#fff', borderRadius: 10, padding: 16, marginBottom: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'flex-start', gap: 12 },
   approveBtn: { background: '#2d6a4f', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 },
   rejectBtn: { background: '#e63946', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12 },
+  kbLabel: { display: 'block', fontSize: 12, fontWeight: 600, color: '#555', marginBottom: 4, marginTop: 10 },
+  kbInput: { width: '100%', padding: '9px 12px', fontSize: 14, borderRadius: 8, border: '1px solid #ddd', boxSizing: 'border-box' as const },
 };

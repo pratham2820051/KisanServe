@@ -1,13 +1,9 @@
 import { Router } from 'express';
-import { login, verifyOtp } from '../controllers/authController';
-import { otpRateLimit } from '../middleware/otpRateLimit';
+import { register, login } from '../controllers/authController';
 
 const router = Router();
 
-// POST /auth/login — initiate OTP-based login (rate-limited: max 5 OTPs/phone/hour)
-router.post('/login', otpRateLimit, login);
-
-// POST /auth/verify-otp — validate OTP, issue JWT on success
-router.post('/verify-otp', verifyOtp);
+router.post('/register', register);
+router.post('/login', login);
 
 export default router;
