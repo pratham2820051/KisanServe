@@ -108,7 +108,10 @@ export default function CropDoctorPage() {
           {!result ? (
             <div style={styles.card}>
               <p>Could not identify the problem. Try being more specific (e.g., "yellow leaves on wheat", "brown spots on tomato").</p>
-              <button style={styles.btn} onClick={() => setMode('input')}>← Try Again</button>
+              <p style={{ marginTop: 12, fontSize: 14, color: '#2d6a4f', background: '#d8f3dc', padding: '10px 14px', borderRadius: 8 }}>
+                📞 For expert advice, contact your local <strong>Krishi Vigyan Kendra (KVK)</strong> or call the <strong>Kisan Call Centre: 1800-180-1551</strong> (free, 24/7)
+              </p>
+              <button style={{ ...styles.btn, marginTop: 16 }} onClick={() => setMode('input')}>← Try Again</button>
             </div>
           ) : (
             <div style={styles.resultCard}>
