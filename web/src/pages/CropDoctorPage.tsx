@@ -44,6 +44,10 @@ const DISEASE_KB = [
   { keywords: ['cracking', 'fruit crack', 'split fruit', 'tomato crack', 'pomegranate crack'], disease: 'Fruit Cracking', crop: 'Tomato, Pomegranate, Cherry', severity: 'Medium', treatment: 'Foliar spray of Calcium nitrate 0.5% + Boron 0.1%. Maintain consistent irrigation.', prevention: 'Consistent irrigation. Mulching. Avoid sudden heavy irrigation after dry spell.' },
   { keywords: ['aflatoxin', 'mold grain', 'grain mold', 'storage mold', 'discolored grain'], disease: 'Grain Mold/Aflatoxin', crop: 'Groundnut, Maize, Sorghum', severity: 'Severe', treatment: 'Dry grain to safe moisture (<12%). Fumigate with Aluminum phosphide tablets. Discard heavily infected grain.', prevention: 'Harvest at right maturity. Dry properly before storage. Use hermetic bags.' },
   { keywords: ['weevil', 'grain weevil', 'storage pest', 'holes in grain', 'powder in grain'], disease: 'Storage Weevil/Grain Pest', crop: 'Wheat, Rice, Maize (stored)', severity: 'High', treatment: 'Fumigate with Aluminum phosphide 3g tablets per tonne. Clean storage before use.', prevention: 'Clean and dry storage. Hermetic bags. Neem leaf layers. Regular inspection.' },
+  { keywords: ['sugarcane smut', 'black whip', 'whip smut', 'black whip sugarcane'], disease: 'Sugarcane Smut', crop: 'Sugarcane', severity: 'High', treatment: 'Remove infected plants showing black whip immediately. Treat planting setts with hot water at 50°C for 2 hours or fungicide before sowing.', prevention: 'Use certified smut-free setts. Follow crop rotation. Avoid ratooning infected crops.' },
+  { keywords: ['sugarcane wilt', 'cane wilt', 'wilting sugarcane', 'yellowing cane', 'drying cane'], disease: 'Wilt Disease of Sugarcane', crop: 'Sugarcane', severity: 'Medium', treatment: 'Remove and destroy affected plants. Improve soil drainage and avoid excess irrigation. Apply balanced fertilizers.', prevention: 'Use healthy disease-free planting material. Follow crop rotation. Maintain proper field hygiene and drainage.' },
+  { keywords: ['leaf scald', 'scald', 'white stripe cane', 'water soaked cane leaf', 'pencil streak'], disease: 'Leaf Scald of Sugarcane', crop: 'Sugarcane', severity: 'Medium', treatment: 'Remove and destroy infected plants. Avoid spreading infection through cutting tools. Disinfect tools with bleach solution.', prevention: 'Use disease-free certified setts. Disinfect tools regularly. Monitor field conditions and remove infected plants early.' },
+  { keywords: ['grassy shoot', 'grassy sugarcane', 'excessive tillers', 'pale yellow shoots', 'phytoplasma cane'], disease: 'Grassy Shoot Disease of Sugarcane', crop: 'Sugarcane', severity: 'High', treatment: 'Uproot and destroy all infected plants immediately. Control leafhopper insect vectors using Imidacloprid 0.5ml/L spray.', prevention: 'Use certified healthy setts from disease-free nurseries. Avoid ratoon crops from infected fields. Control insect vectors.' },
   { keywords: ['hello', 'hi', 'help', 'namaste', 'what can you do'], disease: 'Welcome', crop: 'All', severity: 'Low', treatment: 'I can diagnose crop diseases! Describe what you see on your crop — color changes, spots, holes, wilting, insects, etc.', prevention: 'Try: "yellow leaves", "brown spots on tomato", "white powder on wheat", "holes in cotton", "wilting plant"' },
 ];
 
@@ -69,6 +73,7 @@ const QUICK = [
   'leaf curl', 'mosaic pattern', 'stem borer', 'whitefly',
   'blight tomato', 'rice blast', 'fall armyworm', 'mealybug',
   'nematode root knot', 'zinc deficiency', 'fruit cracking', 'grain mold',
+  'sugarcane smut', 'sugarcane wilt', 'leaf scald', 'grassy shoot',
 ];
 
 export default function CropDoctorPage() {
