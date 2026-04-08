@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 interface WeatherData {
@@ -62,6 +63,7 @@ const testimonials = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -174,8 +176,9 @@ export default function LandingPage() {
             </button>
           </div>
           <div style={s.heroLangs}>
-            {['EN', 'हिं', 'ಕನ್', 'मरा', 'తె', 'தமி', 'മല'].map(l => (
-              <span key={l} style={s.langPill}>{l}</span>
+            {[{code:'en',label:'EN'},{code:'hi',label:'हिं'},{code:'kn',label:'ಕನ್'},{code:'mr',label:'मरा'},{code:'te',label:'తె'},{code:'ta',label:'தமி'},{code:'ml',label:'മല'}].map(l => (
+              <span key={l.code} style={{ ...s.langPill, ...(i18n.language === l.code ? { background: '#2d6a4f', color: '#fff', borderColor: '#2d6a4f' } : {}) }}
+                onClick={() => i18n.changeLanguage(l.code)}>{l.label}</span>
             ))}
           </div>
         </div>
@@ -391,7 +394,7 @@ const s: Record<string, React.CSSProperties> = {
   heroLangs: { display: 'flex', gap: 8, flexWrap: 'wrap' },
   langPill: {
     background: '#fff', border: '1px solid #b7e4c7', color: '#2d6a4f',
-    borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600,
+    borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
   },
   heroVisual: { flex: 1, display: 'flex', justifyContent: 'center', animation: 'float 4s ease-in-out infinite' },
   heroCard: {
