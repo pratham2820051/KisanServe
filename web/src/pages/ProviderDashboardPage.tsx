@@ -100,14 +100,15 @@ export default function ProviderDashboardPage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <span style={{ ...styles.pill, background: STATUS_COLORS[b.status] ?? '#ccc' }}>{b.status}</span>
-              <strong style={{ fontSize: 14 }}>{TYPE_LABELS[b.service_id?.type ?? ''] ?? b.service_id?.type ?? 'Service'}</strong>
+              <strong style={{ fontSize: 14 }}>{TYPE_LABELS[b.services?.type ?? ''] ?? b.services?.type ?? 'Service'}</strong>
             </div>
-            <p style={styles.sub}>👤 {b.farmer_id?.name || b.farmer_id?.phone || 'Farmer'}</p>
-            <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.timeSlot ? `| ${b.timeSlot}` : ''}</p>
-            <p style={styles.sub}>💰 ₹{b.service_id?.price ?? '—'}</p>
-            {b.createdAt && (
+            <p style={styles.sub}>👤 {b.users?.name || b.users?.phone || 'Farmer'}</p>
+            {b.users?.phone && <p style={styles.sub}>📞 {b.users.phone}</p>}
+            <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
+            <p style={styles.sub}>💰 ₹{b.services?.price ?? '—'}</p>
+            {b.created_at && (
               <p style={{ ...styles.sub, color: '#aaa', fontSize: 11 }}>
-                🕐 Raised: {new Date(b.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                🕐 Raised: {new Date(b.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
               </p>
             )}
           </div>
