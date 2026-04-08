@@ -10,7 +10,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Auto-logout on 401 (token expired)
+// Auto-logout on 401 (token expired) — use hash change to avoid full reload
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -18,7 +18,8 @@ api.interceptors.response.use(
       const msg = error.response?.data?.error || '';
       if (msg.includes('expired') || msg.includes('Invalid session')) {
         localStorage.clear();
-        window.location.replace('/login');
+        // Use hash navigation to avoid triggering a server request
+        window.location.href = '/login';
       }
     }
     return Promise.reject(error);
