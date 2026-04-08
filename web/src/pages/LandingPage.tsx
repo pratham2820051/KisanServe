@@ -32,12 +32,12 @@ function weatherIcon(desc: string): string {
 }
 
 const features = [
-  { icon: '🛒', title: 'Service Marketplace', desc: 'Find transport, irrigation, labor, soil testing and more — all near you.' },
-  { icon: '🌿', title: 'Crop Doctor', desc: 'Upload a photo of your crop and get an AI-powered diagnosis instantly.' },
-  { icon: '📍', title: 'Live GPS Tracking', desc: 'Track your service provider in real-time as they head to your farm.' },
-  { icon: '🤖', title: 'AI Farming Assistant', desc: 'Ask anything about farming — pest control, fertilizers, government schemes.' },
-  { icon: '📅', title: 'Farming Calendar', desc: 'Get a personalized schedule for irrigation, fertilizing, and harvest.' },
-  { icon: '📊', title: 'Price Predictions', desc: 'Know when prices are rising or falling so you book at the right time.' },
+  { icon: '🛒', titleKey: 'feat_marketplace', title: 'Service Marketplace', desc: 'Find transport, irrigation, labor, soil testing and more — all near you.' },
+  { icon: '🌿', titleKey: 'feat_cropDoctor', title: 'Crop Doctor', desc: 'Upload a photo of your crop and get an AI-powered diagnosis instantly.' },
+  { icon: '📍', titleKey: 'feat_gps', title: 'Live GPS Tracking', desc: 'Track your service provider in real-time as they head to your farm.' },
+  { icon: '🤖', titleKey: 'feat_ai', title: 'AI Farming Assistant', desc: 'Ask anything about farming — pest control, fertilizers, government schemes.' },
+  { icon: '📅', titleKey: 'feat_calendar', title: 'Farming Calendar', desc: 'Get a personalized schedule for irrigation, fertilizing, and harvest.' },
+  { icon: '📊', titleKey: 'feat_price', title: 'Price Predictions', desc: 'Know when prices are rising or falling so you book at the right time.' },
 ];
 
 const steps = [
@@ -146,13 +146,13 @@ export default function LandingPage() {
       <nav style={{ ...s.nav, ...(scrolled ? s.navScrolled : {}) }}>
         <span style={s.navBrand}>🌾 KisanServe</span>
         <div style={s.navLinks}>
-          <a href="#features" style={s.navLink}>Features</a>
-          <a href="#how" style={s.navLink}>How It Works</a>
-          <a href="#testimonials" style={s.navLink}>Stories</a>
+          <a href="#features" style={s.navLink}>{t('landing.features')}</a>
+          <a href="#how" style={s.navLink}>{t('landing.howItWorks')}</a>
+          <a href="#testimonials" style={s.navLink}>{t('landing.testimonials')}</a>
         </div>
         <div style={s.navActions}>
-          <button style={s.navLoginBtn} onClick={() => navigate('/login')}>Login</button>
-          <button style={s.navCta} onClick={() => navigate('/login')}>Get Started</button>
+          <button style={s.navLoginBtn} onClick={() => navigate('/login')}>{t('common.login')}</button>
+          <button style={s.navCta} onClick={() => navigate('/login')}>{t('landing.getStarted')}</button>
         </div>
       </nav>
 
@@ -160,8 +160,8 @@ export default function LandingPage() {
       <section style={s.hero}>
         <div style={s.heroContent}>
           <h1 style={s.heroTitle}>
-            Smart Farming,<br />
-            <span style={s.heroAccent}>Connected Future</span>
+            {t('landing.tagline').split(',')[0]},<br />
+            <span style={s.heroAccent}>{t('landing.tagline').split(',')[1] || 'Connected Future'}</span>
           </h1>
           <p style={s.heroSub}>
             Book agricultural services, diagnose crop diseases with AI, track providers live,
@@ -169,10 +169,10 @@ export default function LandingPage() {
           </p>
           <div style={s.heroBtns}>
             <button style={s.heroPrimary} onClick={() => navigate('/login')}>
-              Start for Free →
+              {t('landing.getStarted')} →
             </button>
             <button style={s.heroSecondary} onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
-              See Features
+              {t('landing.learnMore')}
             </button>
           </div>
           <div style={s.heroLangs}>
