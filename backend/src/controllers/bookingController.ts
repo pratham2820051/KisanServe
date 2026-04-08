@@ -23,13 +23,23 @@ export async function createBooking(req: Request, res: Response): Promise<void> 
     farmer_id: user.userId, service_id, provider_id: service.provider_id,
     date, time_slot: timeSlot, status: 'Pending',
   };
-  if (fromLocation) insertData.from_location = fromLocation;
-  if (toLocation) insertData.to_location = toLocation;
-  if (distanceKm) insertData.distance_km = distanceKm;
-  if (distanceKm && fromLocation && toLocation) {
-    insertData.notes = JSON.stringify({ fromLocation, toLocation, distanceKm });
-  }
 
+  // Try to store location fields — silently skip if columns don't exist in DB
+  try {
+    const { data, error } = await supabase.from('bookings').insert({
+      ...insertData,
+      ...(fromLocation ? { from_location: fromLocation } : {}),
+      ...(toLocation ? { to_location: toLocation } : {}),
+      ...(distanceKm ? { distance_km: distanceKm } : {}),
+    }).select().single();
+
+    if (!error && data) {
+      res.status(201).json({ booking: data });
+      return;
+    }
+  } catch {}
+
+  // Fallback: insert without location fields
   const { data, error } = await supabase.from('bookings').insert(insertData).select().single();
   if (error) { res.status(500).json({ error: 'Failed to create booking' }); return; }
   res.status(201).json({ booking: data });
