@@ -95,7 +95,6 @@ export default function DashboardPage() {
     const fuelCost = km ? km * 24 : 0;
     const totalPrice = basePrice + (fuelCost > 0 ? fuelCost : 0);
     return (
-    return (
       <div style={styles.bookingCard}>
         <div style={styles.bcRow}>
           <div style={{ flex: 1 }}>
