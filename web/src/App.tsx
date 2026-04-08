@@ -24,6 +24,14 @@ function getUser() {
 function SpaRedirectHandler() {
   const navigate = useNavigate();
   useEffect(() => {
+    // Check sessionStorage first (set by 404.html)
+    const stored = sessionStorage.getItem('spa_redirect');
+    if (stored && stored !== '/') {
+      sessionStorage.removeItem('spa_redirect');
+      navigate(stored, { replace: true });
+      return;
+    }
+    // Fallback: check query param
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get('redirect');
     if (redirect && redirect !== '/') {
