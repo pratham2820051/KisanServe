@@ -183,8 +183,6 @@ export default function App() {
     <BrowserRouter>
       <SpaRedirectHandler />
       <OfflineIndicator />
-      {role === 'Service_Provider' && <SimpleTopBar title="🌾 KisanServe" />}
-      {role === 'Admin' && <SimpleTopBar title="🌾 KisanServe" />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<LandingPage />} />
@@ -200,8 +198,8 @@ export default function App() {
         <Route path="/irrigation" element={<PrivateRoute roles={['Farmer']}><FarmerLayout><IrrigationAdvisorPage /></FarmerLayout></PrivateRoute>} />
 
         {/* Provider & Admin — simple layout */}
-        <Route path="/provider" element={<PrivateRoute roles={['Service_Provider']}><div style={{ maxWidth: 1000, margin: '24px auto', padding: '0 16px' }}><ProviderDashboardPage /></div></PrivateRoute>} />
-        <Route path="/admin" element={<PrivateRoute roles={['Admin']}><div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}><AdminPanelPage /></div></PrivateRoute>} />
+        <Route path="/provider" element={<PrivateRoute roles={['Service_Provider']}><SimpleTopBar title="🌾 KisanServe — Provider" /><div style={{ maxWidth: 1000, margin: '24px auto', padding: '0 16px' }}><ProviderDashboardPage /></div></PrivateRoute>} />
+        <Route path="/admin" element={<PrivateRoute roles={['Admin']}><SimpleTopBar title="🌾 KisanServe — Admin" /><div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}><AdminPanelPage /></div></PrivateRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
