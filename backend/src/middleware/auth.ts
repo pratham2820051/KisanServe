@@ -41,14 +41,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
 }
 
 export function generateToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-  });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 }
 
 export function generateRefreshToken(payload: JwtPayload): string {
   const refreshSecret = process.env.JWT_REFRESH_SECRET || 'dev_refresh_secret';
-  return jwt.sign(payload, refreshSecret, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-  });
+  return jwt.sign(payload, refreshSecret, { expiresIn: '30d' });
 }
