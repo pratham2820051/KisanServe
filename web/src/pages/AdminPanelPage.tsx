@@ -155,13 +155,7 @@ export default function AdminPanelPage() {
             </div>
           </div>
 
-          {/* Platform health */}
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>🖥️ Platform Health</h3>
-            {['Supabase PostgreSQL — Connected', 'KisanServe API — Running on port 3000', 'Web App — Running on port 5173'].map(s => (
-              <p key={s} style={{ margin: '4px 0', fontSize: 14 }}>✅ {s}</p>
-            ))}
-          </div>
+
         </div>
       )}
 
