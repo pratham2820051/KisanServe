@@ -64,21 +64,21 @@ export default function AdminPanelPage() {
 
   async function approveService(id: string) {
     try {
-      await axios.patch(`/api/admin/services/${id}`, { status: 'active' }, { headers });
+      await api.patch(`/api/admin/services/${id}`, { status: 'active' }, { headers });
       setServices(s => s.map(x => x.id === id ? { ...x, status: 'active' } : x));
     } catch { alert('Failed to update service'); }
   }
 
   async function rejectService(id: string) {
     try {
-      await axios.patch(`/api/admin/services/${id}`, { status: 'rejected' }, { headers });
+      await api.patch(`/api/admin/services/${id}`, { status: 'rejected' }, { headers });
       setServices(s => s.map(x => x.id === id ? { ...x, status: 'rejected' } : x));
     } catch { alert('Failed to update service'); }
   }
 
   async function handleReview(id: string, action: 'approve' | 'remove') {
     try {
-      await axios.patch(`/api/admin/reviews/${id}`, { action }, { headers });
+      await api.patch(`/api/admin/reviews/${id}`, { action }, { headers });
       setReviews(r => r.filter(x => x.id !== id));
     } catch { alert('Failed to update review'); }
   }
@@ -293,7 +293,7 @@ export default function AdminPanelPage() {
                 setKbMsg('❌ Answer and at least one keyword or question is required'); return;
               }
               try {
-                const res = await axios.post('/api/chatbot/knowledge', {
+                const res = await api.post('/api/chatbot/knowledge', {
                   question: kbForm.question,
                   keywords: kbForm.keywords.split(',').map((k: string) => k.trim()).filter(Boolean),
                   answer: kbForm.answer,
@@ -324,7 +324,7 @@ export default function AdminPanelPage() {
                 <button style={{ ...styles.rejectBtn, padding: '4px 10px' }} onClick={async () => {
                   if (!window.confirm('Delete this entry?')) return;
                   try {
-                    await axios.delete(`/api/chatbot/knowledge/${i}`, { headers });
+                    await api.delete(`/api/chatbot/knowledge/${i}`, { headers });
                     setKb(prev => prev.filter((_, idx) => idx !== i));
                   } catch { alert('Failed to delete'); }
                 }}>✕</button>
