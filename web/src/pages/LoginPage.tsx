@@ -12,7 +12,7 @@ const ROLES: { value: Role; icon: string; label: string; color: string }[] = [
 ];
 
 export default function LoginPage() {
-  const [splashDone, setSplashDone] = useState(false);
+  const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>('login');
   const [selectedRole, setSelectedRole] = useState<Role>('Farmer');
   const [form, setForm] = useState({ name: '', phone: '', password: '' });
@@ -35,7 +35,7 @@ export default function LoginPage() {
         ? { name: form.name, phone: form.phone, password: form.password, role: selectedRole }
         : { phone: form.phone, password: form.password, role: selectedRole };
 
-      const res = await axios.post(endpoint, payload);
+      const res = await api.post(endpoint, payload);
       localStorage.clear();
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user', JSON.stringify(res.data.user));
@@ -47,64 +47,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   }
-
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
-    if (password !== confirmPassword) { setError('Passwords do not match'); return; }
-    setLoading(true); setError('');
-    try {
-      const res = await api.post('/api/auth/register', { phone, password, role, name });
-      setDevOtp(res.data.devOtp ?? '');
-      setSuccess('OTP sent to your phone.');
-      setScreen('verify');
-    } catch (e: any) {
-      setError(e.response?.data?.error || 'Registration failed');
-    } finally { setLoading(false); }
-  }
-
-  async function handleVerify(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true); setError('');
-    try {
-      const res = await api.post('/api/auth/verify-phone', { phone, otp });
-      localStorage.clear();
-      localStorage.setItem('token', res.data.accessToken);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      const r = res.data.user?.role;
-      navigate(r === 'Service_Provider' ? '/provider' : r === 'Admin' ? '/admin' : '/dashboard', { replace: true });
-    } catch (e: any) {
-      setError(e.response?.data?.error || 'Verification failed');
-    } finally { setLoading(false); }
-  }
-
-  async function handleForgot(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true); setError('');
-    try {
-      const res = await api.post('/api/auth/forgot-password', { phone });
-      setDevOtp(res.data.devOtp ?? '');
-      setSuccess(res.data.message);
-      setScreen('reset');
-    } catch (e: any) {
-      setError(e.response?.data?.error || 'Failed to send OTP');
-    } finally { setLoading(false); }
-  }
-
-  async function handleReset(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true); setError('');
-    try {
-      await api.post('/api/auth/reset-password', { phone, otp, newPassword });
-      setSuccess('Password reset! Please login.');
-      reset('login');
-    } catch (e: any) {
-      setError(e.response?.data?.error || 'Reset failed');
-    } finally { setLoading(false); }
-  }
-
-  if (!splashDone) return null;
-
-  const accentColor = ROLES.find(r => r.value === role)?.color ?? '#2d6a4f';
 
   return (
     <div style={s.page}>
@@ -120,30 +62,19 @@ export default function LoginPage() {
           <p style={s.subtitle}>Smart Farming Platform</p>
         </div>
 
-        {/* Mode toggle */}
         <div style={s.modeToggle}>
           <button style={{ ...s.modeBtn, ...(mode === 'login' ? s.modeBtnActive : {}) }} onClick={() => { setMode('login'); setError(''); }}>Login</button>
           <button style={{ ...s.modeBtn, ...(mode === 'register' ? s.modeBtnActive : {}) }} onClick={() => { setMode('register'); setError(''); }}>Register</button>
         </div>
 
         <div style={s.card}>
-          {/* Role selector */}
           <div style={s.roleRow}>
             {ROLES.map(r => (
               <button key={r.value}
-                style={{
-                  ...s.roleBtn,
-                  ...(selectedRole === r.value ? {
-                    background: r.color,
-                    borderColor: r.color,
-                    color: '#fff',
-                    transform: 'scale(1.04)',
-                  } : {})
-                }}
+                style={{ ...s.roleBtn, ...(selectedRole === r.value ? { background: r.color, borderColor: r.color, color: '#fff', transform: 'scale(1.04)' } : {}) }}
                 onClick={() => setSelectedRole(r.value)}>
                 <span style={{ fontSize: 22 }}>{r.icon}</span>
                 <span style={{ fontSize: 12, fontWeight: 700 }}>{r.label}</span>
-                <span style={{ fontSize: 10, opacity: 0.8 }}>{r.desc}</span>
               </button>
             ))}
           </div>
@@ -165,10 +96,7 @@ export default function LoginPage() {
               value={form.password}
               onChange={e => update({ password: e.target.value })}
               onKeyDown={e => e.key === 'Enter' && submit()} />
-            <button
-              type="button"
-              style={s.eyeBtn}
-              onClick={() => setShowPassword(v => !v)}>
+            <button type="button" style={s.eyeBtn} onClick={() => setShowPassword(v => !v)}>
               {showPassword ? '🙈' : '👁️'}
             </button>
           </div>
@@ -240,7 +168,7 @@ const s: Record<string, React.CSSProperties> = {
   modeBtn: {
     flex: 1, padding: '10px', background: 'none', border: 'none',
     color: 'rgba(255,255,255,0.6)', borderRadius: 10, cursor: 'pointer',
-    fontSize: 14, fontWeight: 600, transition: 'all 0.2s',
+    fontSize: 14, fontWeight: 600,
   },
   modeBtnActive: { background: 'rgba(255,255,255,0.15)', color: '#fff' },
   card: {
@@ -249,7 +177,7 @@ const s: Record<string, React.CSSProperties> = {
     borderRadius: 20, padding: '24px 24px 20px',
     border: '1px solid rgba(255,255,255,0.12)',
     boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-    width: '100%', display: 'flex', flexDirection: 'column', gap: 12,
+    display: 'flex', flexDirection: 'column', gap: 12,
   },
   roleRow: { display: 'flex', gap: 8 },
   roleBtn: {
@@ -257,7 +185,6 @@ const s: Record<string, React.CSSProperties> = {
     padding: '12px 6px', background: 'rgba(255,255,255,0.05)',
     border: '2px solid rgba(255,255,255,0.15)', borderRadius: 12,
     color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
-    transition: 'all 0.2s', boxShadow: 'none',
   },
   divider: { height: 1, background: 'rgba(255,255,255,0.1)' },
   input: {
@@ -275,7 +202,7 @@ const s: Record<string, React.CSSProperties> = {
   btn: {
     width: '100%', padding: '13px', color: '#fff', border: 'none',
     borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)', transition: 'opacity 0.2s',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
   },
   switchText: { color: 'rgba(255,255,255,0.5)', fontSize: 13, textAlign: 'center', margin: 0 },
   error: { color: '#ff6b6b', fontSize: 13, margin: 0, textAlign: 'center' },
