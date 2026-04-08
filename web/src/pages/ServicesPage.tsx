@@ -52,12 +52,27 @@ export default function ServicesPage() {
 
   const DIESEL_RATE = 24; // ₹ per km
 
-  function calcDistance(from: string, to: string): number {
-    // Simple estimate: 1 word difference = ~5km, use string length diff as proxy
-    // Real implementation would use Google Maps API
-    if (!from.trim() || !to.trim()) return 0;
-    const base = Math.abs(from.length - to.length) * 2 + from.split(' ').length * 3 + 5;
-    return Math.min(Math.max(base, 5), 150); // between 5-150km
+  async function calcRealDistance(from: string, to: string, serviceId: string) {
+    if (!from.trim() || !to.trim()) return;
+    try {
+      const geocode = async (place: string) => {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place + ', India')}&format=json&limit=1`);
+        const data = await res.json();
+        if (!data[0]) return null;
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+      };
+
+      const [fromCoord, toCoord] = await Promise.all([geocode(from), geocode(to)]);
+      if (!fromCoord || !toCoord) return;
+
+      // Haversine formula for real distance
+      const R = 6371;
+      const dLat = (toCoord.lat - fromCoord.lat) * Math.PI / 180;
+      const dLon = (toCoord.lon - fromCoord.lon) * Math.PI / 180;
+      const a = Math.sin(dLat/2) ** 2 + Math.cos(fromCoord.lat * Math.PI/180) * Math.cos(toCoord.lat * Math.PI/180) * Math.sin(dLon/2) ** 2;
+      const km = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+      setTransportKm(k => ({ ...k, [serviceId]: km }));
+    } catch { /* silently fail */ }
   }
 
   useEffect(() => {
@@ -216,17 +231,20 @@ export default function ServicesPage() {
                       onChange={e => {
                         const from = e.target.value;
                         setTransportFrom(f => ({ ...f, [s.id]: from }));
-                        const km = calcDistance(from, transportTo[s.id] || '');
-                        setTransportKm(k => ({ ...k, [s.id]: km }));
+                        if (from.length > 3 && (transportTo[s.id] || '').length > 3)
+                          calcRealDistance(from, transportTo[s.id], s.id);
                       }} />
                     <input style={styles.input} type="text" placeholder="🏁 To (destination)"
                       value={transportTo[s.id] || ''}
                       onChange={e => {
                         const to = e.target.value;
                         setTransportTo(t => ({ ...t, [s.id]: to }));
-                        const km = calcDistance(transportFrom[s.id] || '', to);
-                        setTransportKm(k => ({ ...k, [s.id]: km }));
+                        if (to.length > 3 && (transportFrom[s.id] || '').length > 3)
+                          calcRealDistance(transportFrom[s.id], to, s.id);
                       }} />
+                    {transportKm[s.id] === undefined && (transportFrom[s.id] || '').length > 3 && (transportTo[s.id] || '').length > 3 && (
+                      <p style={{ fontSize: 12, color: '#888', margin: 0 }}>📡 Calculating distance...</p>
+                    )}
                   </>
                 )}
                 <input type="date" style={styles.input}
