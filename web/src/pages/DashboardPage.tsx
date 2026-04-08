@@ -12,6 +12,7 @@ interface Booking {
   from_location?: string;
   to_location?: string;
   distance_km?: number;
+  notes?: string;
 }
 
 interface Alert {
@@ -85,7 +86,15 @@ export default function DashboardPage() {
   const completed = bookings.filter(b => b.status === 'Completed').length;
   const totalSpent = bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + (b.services?.price ?? 0), 0);
 
-  function BookingCard({ b }: { b: Booking }) {
+  function BookingCard({ b, showActions }: { b: Booking; showActions?: boolean }) {
+    const notes = (() => { try { return b.notes ? JSON.parse(b.notes) : null; } catch { return null; } })();
+    const from = b.from_location || notes?.fromLocation;
+    const to = b.to_location || notes?.toLocation;
+    const km = b.distance_km || notes?.distanceKm;
+    const basePrice = b.services?.price ?? 0;
+    const fuelCost = km ? km * 24 : 0;
+    const totalPrice = basePrice + (fuelCost > 0 ? fuelCost : 0);
+    return (
     return (
       <div style={styles.bookingCard}>
         <div style={styles.bcRow}>
@@ -97,8 +106,8 @@ export default function DashboardPage() {
             <p style={styles.sub}>🏢 {b.users?.name || b.users?.phone || 'Provider'}</p>
             {b.users?.phone && <p style={styles.sub}>📞 {b.users.phone}</p>}
             <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
-            <p style={styles.sub}>💰 ₹{b.services?.price ?? '—'}</p>
-            {b.from_location && <p style={styles.sub}>📍 {b.from_location} → {b.to_location} {b.distance_km ? `(${b.distance_km} km)` : ''}</p>}
+            <p style={styles.sub}>💰 ₹{totalPrice > 0 ? totalPrice.toLocaleString() : '—'}{fuelCost > 0 ? ` (₹${basePrice} + ₹${fuelCost} fuel)` : ''}</p>
+            {from && <p style={styles.sub}>📍 {from} → {to} {km ? `· ${km} km` : ''}</p>}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {b.status === 'Pending' && (

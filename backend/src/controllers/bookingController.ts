@@ -26,6 +26,9 @@ export async function createBooking(req: Request, res: Response): Promise<void> 
   if (fromLocation) insertData.from_location = fromLocation;
   if (toLocation) insertData.to_location = toLocation;
   if (distanceKm) insertData.distance_km = distanceKm;
+  if (distanceKm && fromLocation && toLocation) {
+    insertData.notes = JSON.stringify({ fromLocation, toLocation, distanceKm });
+  }
 
   const { data, error } = await supabase.from('bookings').insert(insertData).select().single();
   if (error) { res.status(500).json({ error: 'Failed to create booking' }); return; }
