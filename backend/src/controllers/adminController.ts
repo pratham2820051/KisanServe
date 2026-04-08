@@ -86,16 +86,11 @@ export async function getAnalytics(req: Request, res: Response): Promise<void> {
  * All bookings sorted by newest first, with farmer/provider/service populated.
  */
 export async function getAllBookings(req: Request, res: Response): Promise<void> {
-  try {
-    const bookings = await Booking.find()
-      .populate('farmer_id', 'name phone')
-      .populate('provider_id', 'name phone')
-      .populate('service_id', 'type price')
-      .sort({ createdAt: -1 })
-      .limit(200)
-      .lean();
-    res.json({ bookings });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch bookings' });
-  }
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, users!farmer_id(name, phone), users!provider_id(name, phone), services(type, price)')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (error) { res.status(500).json({ error: 'Failed to fetch bookings' }); return; }
+  res.json({ bookings: data });
 }
