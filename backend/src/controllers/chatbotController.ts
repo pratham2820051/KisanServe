@@ -119,6 +119,55 @@ export async function uploadPdfKnowledge(req: Request, res: Response): Promise<v
   const entries = loadKB();
   const added: KBEntry[] = [];
 
+  // Try structured format: Question / Keywords / Answer blocks
+  const structuredRegex = /Question:\s*(.+?)\s*Keywords:\s*(.+?)\s*Answer:\s*(.+?)(?=\d+\.\s*Question:|$)/gis;
+  const matches = [...text.matchAll(structuredRegex)];
+
+  if (matches.length > 0) {
+    // Structured PDF — parse Question/Keywords/Answer
+    for (const match of matches) {
+      const question = match[1].replace(/\s+/g, ' ').trim();
+      const keywordsRaw = match[2].replace(/\s+/g, ' ').trim();
+      const answer = match[3].replace(/\s+/g, ' ').trim();
+      const keywords = keywordsRaw.split(',').map((k: string) => k.trim()).filter(Boolean);
+
+      if (answer.length < 10) continue;
+      const entry: KBEntry = {
+        id: Date.now().toString() + Math.random().toString(36).slice(2),
+        question,
+        keywords,
+        answer,
+      };
+      entries.push(entry);
+      added.push(entry);
+    }
+  } else {
+    // Unstructured PDF — split into paragraphs
+    const paragraphs = text
+      .split(/\n{2,}/)
+      .map((p: string) => p.replace(/\s+/g, ' ').trim())
+      .filter((p: string) => p.length > 50);
+
+    if (paragraphs.length === 0) {
+      res.status(400).json({ error: 'No readable content found in PDF.' });
+      return;
+    }
+
+    for (const para of paragraphs) {
+      const words = para.toLowerCase().split(/\s+/).slice(0, 10)
+        .filter((w: string) => w.length > 3)
+        .map((w: string) => w.replace(/[^a-z]/g, ''));
+      const keywords = [...new Set(words)].filter(Boolean).slice(0, 5);
+      const entry: KBEntry = {
+        id: Date.now().toString() + Math.random().toString(36).slice(2),
+        keywords,
+        answer: para,
+      };
+      entries.push(entry);
+      added.push(entry);
+    }
+  }
+
   for (const para of paragraphs) {
     // Extract keywords from first 10 words
     const words = para.toLowerCase().split(/\s+/).slice(0, 10)

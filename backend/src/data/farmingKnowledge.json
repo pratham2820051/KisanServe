@@ -206,5 +206,150 @@
       "cotton soil"
     ],
     "answer": "Black soil is ideal for crops like cotton, soybean, groundnut, sunflower, and pulses due to its high moisture retention and nutrient content."
+  },
+  {
+    "id": "pdf001",
+    "question": "What crops grow in black soil?",
+    "keywords": [
+      "black soil",
+      "regur",
+      "cotton soil",
+      "crops black soil"
+    ],
+    "answer": "Black soil is very fertile and retains moisture well. It is best for crops like cotton, soybean, groundnut, sunflower, and pulses. Cotton grows especially well in this soil."
+  },
+  {
+    "id": "pdf002",
+    "question": "Which crops grow in red soil?",
+    "keywords": [
+      "red soil",
+      "crops red soil",
+      "groundnut soil"
+    ],
+    "answer": "Red soil is suitable for crops like groundnut, millets, pulses, tobacco, and cotton. It requires proper irrigation and fertilizers for better yield."
+  },
+  {
+    "id": "pdf003",
+    "question": "What is the best fertilizer for rice?",
+    "keywords": [
+      "rice fertilizer",
+      "paddy fertilizer",
+      "npk rice"
+    ],
+    "answer": "Rice grows best with a balanced use of nitrogen, phosphorus, and potassium (NPK). Urea is commonly used for nitrogen supply, along with DAP for better growth."
+  },
+  {
+    "id": "pdf004",
+    "question": "How to increase crop yield?",
+    "keywords": [
+      "increase yield",
+      "improve farming",
+      "high production"
+    ],
+    "answer": "Crop yield can be increased by using quality seeds, proper irrigation, balanced fertilizers, pest control, and following crop rotation techniques."
+  },
+  {
+    "id": "pdf005",
+    "question": "What is drip irrigation?",
+    "keywords": [
+      "drip irrigation",
+      "water saving",
+      "irrigation method"
+    ],
+    "answer": "Drip irrigation is a method where water is delivered directly to plant roots, saving water and improving efficiency."
+  },
+  {
+    "id": "pdf006",
+    "question": "How to control pests in crops?",
+    "keywords": [
+      "pest control",
+      "insects farming",
+      "crop protection"
+    ],
+    "answer": "Pests can be controlled using natural pesticides like neem oil, chemical pesticides if needed, and maintaining proper field hygiene."
+  },
+  {
+    "id": "pdf007",
+    "question": "What are Kharif crops?",
+    "keywords": [
+      "kharif crops",
+      "rainy season crops"
+    ],
+    "answer": "Kharif crops are grown during the monsoon season (June to October). Examples include rice, maize, cotton, and soybean."
+  },
+  {
+    "id": "pdf008",
+    "question": "What are Rabi crops?",
+    "keywords": [
+      "rabi crops",
+      "winter crops"
+    ],
+    "answer": "Rabi crops are grown during winter (October to March). Examples include wheat, mustard, barley, and peas."
+  },
+  {
+    "id": "pdf009",
+    "question": "How often should crops be watered?",
+    "keywords": [
+      "watering crops",
+      "irrigation timing"
+    ],
+    "answer": "Watering depends on crop type, soil, and weather. Most crops require watering every 2 to 5 days."
+  },
+  {
+    "id": "pdf010",
+    "question": "What is organic farming?",
+    "keywords": [
+      "organic farming",
+      "natural farming",
+      "no chemicals"
+    ],
+    "answer": "Organic farming uses natural fertilizers like compost and avoids chemical pesticides, improving soil health and producing safe food."
+  },
+  {
+    "id": "pdf011",
+    "question": "What is PM Kisan scheme?",
+    "keywords": [
+      "pm kisan",
+      "farmer scheme india"
+    ],
+    "answer": "PM Kisan is a government scheme that provides Rs.6000 per year to farmers in three installments for financial support."
+  },
+  {
+    "id": "pdf012",
+    "question": "Which crop is best for summer season?",
+    "keywords": [
+      "summer crops",
+      "hot weather crops"
+    ],
+    "answer": "Crops like maize, sunflower, watermelon, and vegetables grow well during summer."
+  },
+  {
+    "id": "pdf013",
+    "question": "How to improve soil fertility?",
+    "keywords": [
+      "soil fertility",
+      "improve soil",
+      "nutrients soil"
+    ],
+    "answer": "Soil fertility can be improved by adding organic matter, using compost, crop rotation, and balanced fertilizers."
+  },
+  {
+    "id": "pdf014",
+    "question": "What is crop rotation?",
+    "keywords": [
+      "crop rotation",
+      "farming method"
+    ],
+    "answer": "Crop rotation is growing different crops in the same field in different seasons to maintain soil nutrients and reduce pests."
+  },
+  {
+    "id": "pdf015",
+    "question": "How to get better price for crops?",
+    "keywords": [
+      "crop price",
+      "selling crops",
+      "mandi rate"
+    ],
+    "answer": "Farmers can get better prices by selling in government mandis, using online platforms, and storing crops properly."
   }
 ]
