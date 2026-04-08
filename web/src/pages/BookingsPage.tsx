@@ -4,11 +4,11 @@ import api from '../api/axios';
 
 interface Booking {
   id: string;
-  service_id?: { type: string; price: number };
-  provider_id?: { name: string };
+  services?: { type: string; price: number };
+  users?: { name: string; phone: string };
   status: string;
   date: string;
-  timeSlot?: string;
+  time_slot?: string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -44,12 +44,13 @@ export default function BookingsPage() {
         {bookings.map(b => (
           <div key={b.id} style={styles.card}>
             <div style={styles.row}>
-              <span style={styles.serviceName}>{TYPE_LABELS[b.service_id?.type ?? ''] ?? b.service_id?.type ?? 'Service'}</span>
+              <span style={styles.serviceName}>{TYPE_LABELS[b.services?.type ?? ''] ?? b.services?.type ?? 'Service'}</span>
               <span style={{ ...styles.badge, background: STATUS_COLORS[b.status] ?? '#ccc' }}>{b.status}</span>
             </div>
-            {b.provider_id?.name && <p style={styles.meta}>🏢 {b.provider_id.name}</p>}
-            <p style={styles.meta}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.timeSlot ? `| ${b.timeSlot}` : ''}</p>
-            <p style={styles.meta}>💰 ₹{b.service_id?.price ?? '—'}</p>
+            {b.users?.name && <p style={styles.meta}>🏢 {b.users.name}</p>}
+            {b.users?.phone && <p style={styles.meta}>📞 {b.users.phone}</p>}
+            <p style={styles.meta}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
+            <p style={styles.meta}>💰 ₹{b.services?.price ?? '—'}</p>
           </div>
         ))}
       </div>

@@ -4,11 +4,11 @@ import api from '../api/axios';
 
 interface Booking {
   id: string;
-  service_id?: { type: string; price: number; description: string; averageRating: number };
-  provider_id?: { name: string; phone: string };
+  services?: { type: string; price: number; description: string; category: string };
+  users?: { name: string; phone: string; trust_score: number };
   status: string;
   date: string;
-  timeSlot?: string;
+  time_slot?: string;
 }
 
 interface Alert {
@@ -79,7 +79,7 @@ export default function DashboardPage() {
   const pending = bookings.filter(b => b.status === 'Pending').length;
   const active = bookings.filter(b => ['Accepted', 'InProgress'].includes(b.status)).length;
   const completed = bookings.filter(b => b.status === 'Completed').length;
-  const totalSpent = bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + (b.service_id?.price ?? 0), 0);
+  const totalSpent = bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + (b.services?.price ?? 0), 0);
 
   function BookingCard({ b }: { b: Booking }) {
     return (
@@ -88,11 +88,12 @@ export default function DashboardPage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <span style={{ ...styles.pill, background: STATUS_COLORS[b.status] ?? '#ccc' }}>{b.status}</span>
-              <strong style={{ fontSize: 14 }}>{TYPE_LABELS[b.service_id?.type ?? ''] ?? b.service_id?.type ?? 'Service'}</strong>
+              <strong style={{ fontSize: 14 }}>{TYPE_LABELS[b.services?.type ?? ''] ?? b.services?.type ?? 'Service'}</strong>
             </div>
-            <p style={styles.sub}>🏢 {b.provider_id?.name || 'Provider'}</p>
-            <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.timeSlot ? `| ${b.timeSlot}` : ''}</p>
-            <p style={styles.sub}>💰 ₹{b.service_id?.price ?? '—'}</p>
+            <p style={styles.sub}>🏢 {b.users?.name || b.users?.phone || 'Provider'}</p>
+            {b.users?.phone && <p style={styles.sub}>📞 {b.users.phone}</p>}
+            <p style={styles.sub}>📅 {new Date(b.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} {b.time_slot ? `| ${b.time_slot}` : ''}</p>
+            <p style={styles.sub}>💰 ₹{b.services?.price ?? '—'}</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {b.status === 'Pending' && (
